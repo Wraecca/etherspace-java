@@ -1,0 +1,41 @@
+apply plugin: 'kotlin'
+
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    // assertj
+    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.8.0'
+
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+    compile group: 'com.google.guava', name: 'guava', version: '23.6-jre'
+
+    // kluent
+    testCompile 'org.amshove.kluent:kluent:1.30'
+
+    // kotlin
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    // kotlinx-coroutines
+    compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:0.21.2'
+    testCompile 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:0.21.2'
+
+    // kotlin-unsigned
+    compile 'com.github.kotlin-graphics:kotlin-unsigned:v2.1'
+
+    // mockito
+    // https://mvnrepository.com/artifact/org.mockito/mockito-inline
+    testCompile group: 'org.mockito', name: 'mockito-inline', version: '2.12.0'
+
+    // web3j
+    compile 'org.web3j:core:3.2.0'
+    compile 'org.web3j:infura:3.2.0'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
