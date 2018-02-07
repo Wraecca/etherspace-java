@@ -15,7 +15,7 @@ interface Web3 {
     val abi: Abi
 
     interface Abi {
-        fun encodeFunctionCall(contractFunction: ContractFunction): String
+        fun encodeFunctionCall(parameters: List<Any>, functionName: String): String
 
         fun decodeParameters(types: List<Type>, hexString: String): List<Any>
     }

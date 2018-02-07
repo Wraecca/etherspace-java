@@ -46,7 +46,7 @@ class EtherSpace(private val web3: Web3jAdapter,
         val contractFunction = Web3.ContractFunction(functionName,
                 args,
                 returnType.listTupleActualTypes())
-        val encodedFunction = web3.abi.encodeFunctionCall(contractFunction)
+        val encodedFunction = web3.abi.encodeFunctionCall(contractFunction.args, contractFunction.name)
         val nonce = web3.eth.getTransactionCount(credentials!!.address)
         val transactionObject = Web3.TransactionObject(credentials.address,
                 smartContract.address,
@@ -67,7 +67,7 @@ class EtherSpace(private val web3: Web3jAdapter,
         val contractFunction = Web3.ContractFunction(functionName,
                 args,
                 returnType.listTupleActualTypes())
-        val encodedFunction = web3.abi.encodeFunctionCall(contractFunction)
+        val encodedFunction = web3.abi.encodeFunctionCall(contractFunction.args, contractFunction.name)
         val transactionObject = Web3.TransactionObject(credentials!!.address,
                 smartContract.address,
                 data = encodedFunction)
