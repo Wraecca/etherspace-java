@@ -102,29 +102,29 @@ class Web3jAbiTest {
 
     @Test
     fun encodeFunctionCall_int24Type() {
-        val enc = web3jAbi.encodeFunctionCall(listOf(Int24(10)), "int24Type")
+        val enc = web3jAbi.encodeFunctionCall(listOf(SolInt24(10)), "int24Type")
         enc.`should equal to`("0x338e98c6000000000000000000000000000000000000000000000000000000000000000a")
     }
 
     @Test
     fun decodeParameters_int24() {
-        val list = web3jAbi.decodeParameters(listOf(Int24::class.java),
+        val list = web3jAbi.decodeParameters(listOf(SolInt24::class.java),
                 "000000000000000000000000000000000000000000000000000000000000000a")
-        list.`should equal`(listOf(Int24(10)))
+        list.`should equal`(listOf(SolInt24(10)))
     }
 
     @Test
     fun encodeFunctionCall_addressType() {
-        val enc = web3jAbi.encodeFunctionCall(listOf(Address("0xa871c507184ecfaf947253e187826c1907e8dc7d")),
+        val enc = web3jAbi.encodeFunctionCall(listOf(SolAddress("0xa871c507184ecfaf947253e187826c1907e8dc7d")),
                 "addressType")
         enc.`should equal to`("0x99ddb29b000000000000000000000000a871c507184ecfaf947253e187826c1907e8dc7d")
     }
 
     @Test
     fun decodeParameters_address() {
-        val list = web3jAbi.decodeParameters(listOf(Address::class.java),
+        val list = web3jAbi.decodeParameters(listOf(SolAddress::class.java),
                 "000000000000000000000000a871c507184ecfaf947253e187826c1907e8dc7d")
-        list.`should equal`(listOf(Address("0xa871c507184ecfaf947253e187826c1907e8dc7d")))
+        list.`should equal`(listOf(SolAddress("0xa871c507184ecfaf947253e187826c1907e8dc7d")))
     }
 
     @Test
@@ -175,30 +175,30 @@ class Web3jAbiTest {
 
     @Test
     fun encodeFunctionCall_bytes15Type() {
-        val enc = web3jAbi.encodeFunctionCall(listOf(Bytes15("123456789012345".toByteArray(Charsets.US_ASCII))),
+        val enc = web3jAbi.encodeFunctionCall(listOf(SolBytes15("123456789012345".toByteArray(Charsets.US_ASCII))),
                 "bytes15Type")
         enc.`should equal to`("0x8f31808f3132333435363738393031323334350000000000000000000000000000000000")
     }
 
     @Test
     fun decodeParameters_bytes15() {
-        val list = web3jAbi.decodeParameters(listOf(Bytes15::class.java),
+        val list = web3jAbi.decodeParameters(listOf(SolBytes15::class.java),
                 "3132333435363738393031323334350000000000000000000000000000000000")
-        list.map { String((it as Bytes15).value) }.`should equal`(listOf("123456789012345"))
+        list.map { String((it as SolBytes15).value) }.`should equal`(listOf("123456789012345"))
     }
 
     @Test
     fun encodeFunctionCall_bytes32Type() {
-        val enc = web3jAbi.encodeFunctionCall(listOf(Bytes32("12345678901234567890123456789012".toByteArray(Charsets.US_ASCII))),
+        val enc = web3jAbi.encodeFunctionCall(listOf(SolBytes32("12345678901234567890123456789012".toByteArray(Charsets.US_ASCII))),
                 "bytes32Type")
         enc.`should equal to`("0xb02ecf793132333435363738393031323334353637383930313233343536373839303132")
     }
 
     @Test
     fun decodeParameters_bytes32() {
-        val list = web3jAbi.decodeParameters(listOf(Bytes32::class.java),
+        val list = web3jAbi.decodeParameters(listOf(SolBytes32::class.java),
                 "3132333435363738393031323334353637383930313233343536373839303132")
-        list.map { String((it as Bytes32).value) }.`should equal`(listOf("12345678901234567890123456789012"))
+        list.map { String((it as SolBytes32).value) }.`should equal`(listOf("12345678901234567890123456789012"))
     }
 
     @Test

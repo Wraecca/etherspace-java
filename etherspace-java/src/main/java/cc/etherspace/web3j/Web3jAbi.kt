@@ -46,11 +46,11 @@ class Web3jAbi : Web3.Abi {
             Boolean::class.java.isAssignableFrom(clazz) -> Bool::class.java
             BigInteger::class.java.isAssignableFrom(clazz) -> Int256::class.java
             UBigInteger::class.java.isAssignableFrom(clazz) -> Uint256::class.java
-            cc.etherspace.Int24::class.java.isAssignableFrom(clazz) -> Int24::class.java
-            cc.etherspace.Address::class.java.isAssignableFrom(clazz) -> Address::class.java
+            cc.etherspace.SolInt24::class.java.isAssignableFrom(clazz) -> Int24::class.java
+            cc.etherspace.SolAddress::class.java.isAssignableFrom(clazz) -> Address::class.java
             Byte::class.java.isAssignableFrom(clazz) -> Bytes1::class.java
-            cc.etherspace.Bytes15::class.java.isAssignableFrom(clazz) -> Bytes15::class.java
-            cc.etherspace.Bytes32::class.java.isAssignableFrom(clazz) -> Bytes32::class.java
+            cc.etherspace.SolBytes15::class.java.isAssignableFrom(clazz) -> Bytes15::class.java
+            cc.etherspace.SolBytes32::class.java.isAssignableFrom(clazz) -> Bytes32::class.java
             ByteArray::class.java.isAssignableFrom(clazz) -> DynamicBytes::class.java
             else -> throw IllegalArgumentException()
         }
@@ -63,14 +63,14 @@ class Web3jAbi : Web3.Abi {
             is Boolean -> Bool(value)
             is BigInteger -> Int256(value)
             is UBigInteger -> Uint256(value.value)
-            is cc.etherspace.Int24 -> Int24(value.value.toBigInteger())
-            is cc.etherspace.Address -> Address(value.address)
+            is cc.etherspace.SolInt24 -> Int24(value.value.toBigInteger())
+            is cc.etherspace.SolAddress -> Address(value.address)
             is List<*> -> {
                 DynamicArray(value.map { toWeb3jValue(it!!) })
             }
             is Byte -> Bytes1(byteArrayOf(value))
-            is cc.etherspace.Bytes15 -> Bytes15(value.value)
-            is cc.etherspace.Bytes32 -> Bytes32(value.value)
+            is cc.etherspace.SolBytes15 -> Bytes15(value.value)
+            is cc.etherspace.SolBytes32 -> Bytes32(value.value)
             is ByteArray -> DynamicBytes(value)
             else -> throw IllegalArgumentException()
         }
@@ -82,12 +82,12 @@ class Web3jAbi : Web3.Abi {
             is Bool -> value.value
             is Int256 -> value.value
             is Uint256 -> UBigInteger(value.value)
-            is Int24 -> cc.etherspace.Int24(value.value.toInt())
-            is Address -> cc.etherspace.Address(value.value)
+            is Int24 -> cc.etherspace.SolInt24(value.value.toInt())
+            is Address -> cc.etherspace.SolAddress(value.value)
             is DynamicArray<*> -> value.value
             is Bytes1 -> value.value[0]
-            is Bytes15 -> cc.etherspace.Bytes15(value.value)
-            is Bytes32 -> cc.etherspace.Bytes32(value.value)
+            is Bytes15 -> cc.etherspace.SolBytes15(value.value)
+            is Bytes32 -> cc.etherspace.SolBytes32(value.value)
             is DynamicBytes -> value.value
             else -> throw IllegalArgumentException()
         }

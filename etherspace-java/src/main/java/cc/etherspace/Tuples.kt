@@ -1,26 +1,24 @@
 package cc.etherspace
 
-import java.io.Serializable
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 interface Tuple
 
-data class Tuple4<out A, out B, out C, out D>(val first: A, val second: B, val third: C, val fourth: D) : Serializable,
-        Tuple
+data class Tuple4<out A, out B, out C, out D>(val first: A, val second: B, val third: C, val fourth: D) : Tuple
 
 data class Tuple5<out A, out B, out C, out D, out E>(val first: A,
                                                      val second: B,
                                                      val third: C,
                                                      val fourth: D,
-                                                     val fifth: E) : Serializable, Tuple
+                                                     val fifth: E) : Tuple
 
 data class Tuple6<out A, out B, out C, out D, out E, out F>(val first: A,
                                                             val second: B,
                                                             val third: C,
                                                             val fourth: D,
                                                             val fifth: E,
-                                                            val sixth: F) : Serializable, Tuple
+                                                            val sixth: F) : Tuple
 
 data class Tuple7<out A, out B, out C, out D, out E, out F, out G>(val first: A,
                                                                    val second: B,
@@ -28,7 +26,7 @@ data class Tuple7<out A, out B, out C, out D, out E, out F, out G>(val first: A,
                                                                    val fourth: D,
                                                                    val fifth: E,
                                                                    val sixth: F,
-                                                                   val seventh: G) : Serializable, Tuple
+                                                                   val seventh: G) : Tuple
 
 data class Tuple8<out A, out B, out C, out D, out E, out F, out G, out H>(val first: A,
                                                                           val second: B,
@@ -37,7 +35,7 @@ data class Tuple8<out A, out B, out C, out D, out E, out F, out G, out H>(val fi
                                                                           val fifth: E,
                                                                           val sixth: F,
                                                                           val seventh: G,
-                                                                          val eighth: H) : Serializable, Tuple
+                                                                          val eighth: H) : Tuple
 
 data class Tuple9<out A, out B, out C, out D, out E, out F, out G, out H, out I>(val first: A,
                                                                                  val second: B,
@@ -47,7 +45,7 @@ data class Tuple9<out A, out B, out C, out D, out E, out F, out G, out H, out I>
                                                                                  val sixth: F,
                                                                                  val seventh: G,
                                                                                  val eighth: H,
-                                                                                 val ninth: I) : Serializable, Tuple
+                                                                                 val ninth: I) : Tuple
 
 data class Tuple10<out A, out B, out C, out D, out E, out F, out G, out H, out I, out J>(val first: A,
                                                                                          val second: B,
@@ -58,8 +56,7 @@ data class Tuple10<out A, out B, out C, out D, out E, out F, out G, out H, out I
                                                                                          val seventh: G,
                                                                                          val eighth: H,
                                                                                          val ninth: I,
-                                                                                         val tenth: J) : Serializable,
-        Tuple
+                                                                                         val tenth: J) : Tuple
 
 fun Type.isTuple(): Boolean {
     if (this !is ParameterizedType) {

@@ -21,7 +21,7 @@ public class JavaGreeterTest {
                 .provider("https://rinkeby.infura.io/3teU4WimZ2pbdjPUDpPW")
                 .credentials(credentials)
                 .build();
-        greeter = etherSpace.create(new Address("0x6183ef18b3961f695e255604facb0b8651d2b1ee"), JavaGreeter.class);
+        greeter = etherSpace.create(new SolAddress("0x6183ef18b3961f695e255604facb0b8651d2b1ee"), JavaGreeter.class);
     }
 
     @Test

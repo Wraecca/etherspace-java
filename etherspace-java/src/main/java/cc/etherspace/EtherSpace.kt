@@ -14,14 +14,14 @@ class EtherSpace(private val web3: Web3jAdapter,
                  private val credentials: Credentials?,
                  private val callAdapters: List<CallAdapter<Any, Any>>) {
     @Suppress("UNCHECKED_CAST")
-    fun <T> create(smartContract: Address, service: Class<T>): T {
+    fun <T> create(smartContract: SolAddress, service: Class<T>): T {
         return Proxy.newProxyInstance(service.classLoader, arrayOf(service)) { proxy, method, args ->
             invokeFunction(smartContract, method, args?.toList() ?: emptyList())
         } as T
     }
 
     @Throws(IOException::class)
-    private fun invokeFunction(smartContract: Address,
+    private fun invokeFunction(smartContract: SolAddress,
                                method: Method,
                                args: List<Any>): Any {
         val callAdapter = callAdapters.first { it.adaptable(method.genericReturnType, method.annotations) }
@@ -39,7 +39,7 @@ class EtherSpace(private val web3: Web3jAdapter,
     }
 
     @Throws(IOException::class)
-    private fun invokeTransactionFunction(smartContract: Address,
+    private fun invokeTransactionFunction(smartContract: SolAddress,
                                           functionName: String,
                                           args: List<Any>,
                                           returnType: java.lang.reflect.Type): String {
@@ -60,7 +60,7 @@ class EtherSpace(private val web3: Web3jAdapter,
     }
 
     @Throws(IOException::class)
-    private fun invokeViewFunction(smartContract: Address,
+    private fun invokeViewFunction(smartContract: SolAddress,
                                    functionName: String,
                                    args: List<Any>,
                                    returnType: Type): Any {

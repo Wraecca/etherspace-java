@@ -7,16 +7,16 @@ data class UBigInteger(var value: BigInteger) {
     constructor(long: Long) : this(BigInteger.valueOf(long))
 }
 
-data class Int24(var value: Int)
+data class SolInt24(var value: Int)
 
-data class Address(val address: String)
+data class SolAddress(val address: String)
 
-data class Bytes15(val value: ByteArray) {
+data class SolBytes15(val value: ByteArray) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Bytes15
+        other as SolBytes15
 
         if (!Arrays.equals(value, other.value)) return false
 
@@ -28,12 +28,12 @@ data class Bytes15(val value: ByteArray) {
     }
 }
 
-data class Bytes32(val value: ByteArray) {
+data class SolBytes32(val value: ByteArray) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Bytes32
+        other as SolBytes32
 
         if (!Arrays.equals(value, other.value)) return false
 

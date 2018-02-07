@@ -18,7 +18,7 @@ class GreaterTest {
             credentials = Credentials.create(ECKeyPair.create(
                     BigInteger("77398679111088585283982189543320298238063257726010371587476264149399587362827")))
         }
-        greeter = etherSpace.create(Address("0xa871c507184ecfaf947253e187826c1907e8dc7d"), Greeter::class.java)
+        greeter = etherSpace.create(SolAddress("0xa871c507184ecfaf947253e187826c1907e8dc7d"), Greeter::class.java)
     }
 
     fun newGreeting() {
@@ -79,13 +79,13 @@ class GreaterTest {
 
     @Test
     fun int24Type() {
-        val i = greeter.int24Type(Int24(10))
-        i.`should equal`(Int24(10))
+        val i = greeter.int24Type(SolInt24(10))
+        i.`should equal`(SolInt24(10))
     }
 
     @Test
     fun addressType() {
-        val address = Address("0xa871c507184ecfaf947253e187826c1907e8dc7d")
+        val address = SolAddress("0xa871c507184ecfaf947253e187826c1907e8dc7d")
         val a = greeter.addressType(address)
         a.`should equal`(address)
     }
@@ -105,14 +105,14 @@ class GreaterTest {
 
     @Test
     fun bytes15Type() {
-        val bytes = Bytes15("123456789012345".toByteArray(Charsets.ISO_8859_1))
+        val bytes = SolBytes15("123456789012345".toByteArray(Charsets.ISO_8859_1))
         val i = greeter.bytes15Type(bytes)
         i.`should equal`(bytes)
     }
 
     @Test
     fun bytes32Type() {
-        val bytes = Bytes32("12345678901234567890123456789012".toByteArray(Charsets.ISO_8859_1))
+        val bytes = SolBytes32("12345678901234567890123456789012".toByteArray(Charsets.ISO_8859_1))
         val i = greeter.bytes32Type(bytes)
         i.`should equal`(bytes)
     }

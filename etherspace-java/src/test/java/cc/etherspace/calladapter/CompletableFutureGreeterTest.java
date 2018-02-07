@@ -1,6 +1,6 @@
 package cc.etherspace.calladapter;
 
-import cc.etherspace.Address;
+import cc.etherspace.SolAddress;
 import cc.etherspace.EtherSpace;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class CompletableFutureGreeterTest {
                 .credentials(credentials)
                 .addCallAdapter(new CompletableFutureCallAdapter<>())
                 .build();
-        greeter = etherSpace.create(new Address("0x6183ef18b3961f695e255604facb0b8651d2b1ee"), CompletableFutureGreeter.class);
+        greeter = etherSpace.create(new SolAddress("0x6183ef18b3961f695e255604facb0b8651d2b1ee"), CompletableFutureGreeter.class);
     }
 
     @Test

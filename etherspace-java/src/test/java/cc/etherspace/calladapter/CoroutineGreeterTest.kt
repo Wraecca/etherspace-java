@@ -1,6 +1,6 @@
 package cc.etherspace.calladapter
 
-import cc.etherspace.Address
+import cc.etherspace.SolAddress
 import cc.etherspace.EtherSpace
 import kotlinx.coroutines.experimental.runBlocking
 import org.amshove.kluent.`should equal to`
@@ -21,7 +21,7 @@ class CoroutineGreeterTest {
                     BigInteger("77398679111088585283982189543320298238063257726010371587476264149399587362827")))
             callAdapters += CoroutineCallAdapter()
         }
-        greeter = etherSpace.create(Address("0x6183ef18b3961f695e255604facb0b8651d2b1ee"), CoroutineGreeter::class.java)
+        greeter = etherSpace.create(SolAddress("0x6183ef18b3961f695e255604facb0b8651d2b1ee"), CoroutineGreeter::class.java)
     }
 
     @Test

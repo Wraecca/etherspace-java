@@ -1,6 +1,5 @@
 package cc.etherspace
 
-import unsigned.Uint
 import java.math.BigInteger
 
 interface Greeter {
@@ -27,10 +26,10 @@ interface Greeter {
     fun uintType(int: UBigInteger): UBigInteger
 
     @View
-    fun int24Type(int: Int24): Int24
+    fun int24Type(solInt: SolInt24): SolInt24
 
     @View
-    fun addressType(address: Address): Address
+    fun addressType(solAddress: SolAddress): SolAddress
 
     @View
     fun uintsType(uints: List<UBigInteger>): List<UBigInteger>
@@ -39,10 +38,10 @@ interface Greeter {
     fun byteType(byte: Byte): Byte
 
     @View
-    fun bytes15Type(byte: Bytes15): Bytes15
+    fun bytes15Type(aByte: SolBytes15): SolBytes15
 
     @View
-    fun bytes32Type(byte: Bytes32): Bytes32
+    fun bytes32Type(aByte: SolBytes32): SolBytes32
 
     @View
     fun bytesType(byte: ByteArray): ByteArray
