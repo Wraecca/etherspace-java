@@ -24,7 +24,7 @@ public class CompletableFutureGreeterTest {
                 .credentials(credentials)
                 .addCallAdapter(new CompletableFutureCallAdapter<>())
                 .build();
-        greeter = etherSpace.create(new SolAddress("0x6183ef18b3961f695e255604facb0b8651d2b1ee"), CompletableFutureGreeter.class);
+        greeter = etherSpace.create(new SolAddress("0xa871c507184ecfaf947253e187826c1907e8dc7d"), CompletableFutureGreeter.class);
     }
 
     @Test

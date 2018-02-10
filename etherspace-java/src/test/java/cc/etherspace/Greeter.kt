@@ -5,6 +5,8 @@ import java.math.BigInteger
 interface Greeter {
     fun newGreeting(greeting: String): String
 
+    fun newGreeting(greeting: String, options: EtherSpace.Options): String
+
     @View
     fun greet(): String
 

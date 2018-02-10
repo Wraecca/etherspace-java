@@ -6,6 +6,7 @@ import org.junit.Before
 import org.junit.Test
 import org.web3j.crypto.Credentials
 import org.web3j.crypto.ECKeyPair
+import java.io.IOException
 import java.math.BigInteger
 
 class GreaterTest {
@@ -21,8 +22,16 @@ class GreaterTest {
         greeter = etherSpace.create(SolAddress("0xa871c507184ecfaf947253e187826c1907e8dc7d"), Greeter::class.java)
     }
 
+    @Test
     fun newGreeting() {
         val transactionHash = greeter.newGreeting("Hello World")
+        transactionHash.length.`should equal to`(66)
+    }
+
+    @Test(expected = IOException::class)
+    fun newGreeting_options() {
+        val transactionHash = greeter.newGreeting("Hello World",
+                EtherSpace.Options(gas = BigInteger.valueOf(44_000_000_000L)))
         transactionHash.length.`should equal to`(66)
     }
 

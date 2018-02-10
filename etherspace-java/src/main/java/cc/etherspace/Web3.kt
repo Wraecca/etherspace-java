@@ -28,7 +28,7 @@ interface Web3 {
                                 blockParameter: DefaultBlockParameter = DefaultBlockParameterName.LATEST): BigInteger
 
         fun signTransaction(transactionObject: TransactionObject, credentials: Credentials): String
-        
+
         fun sendTransaction(transactionObject: TransactionObject,
                             credentials: Credentials): EthSendTransaction
 
@@ -46,5 +46,17 @@ interface Web3 {
                                  val gas: BigInteger = Contract.GAS_LIMIT,
                                  val gasPrice: BigInteger = ManagedTransaction.GAS_PRICE,
                                  val data: String,
-                                 val nonce: BigInteger? = null)
+                                 val nonce: BigInteger? = null) {
+        constructor(from: String,
+                    to: String,
+                    data: String,
+                    options: EtherSpace.Options,
+                    nonce: BigInteger? = null) : this(from,
+                to,
+                options.value,
+                options.gas,
+                options.gasPrice,
+                data,
+                nonce)
+    }
 }

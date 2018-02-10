@@ -21,7 +21,7 @@ class CoroutineGreeterTest {
                     BigInteger("77398679111088585283982189543320298238063257726010371587476264149399587362827")))
             callAdapters += CoroutineCallAdapter()
         }
-        greeter = etherSpace.create(SolAddress("0x6183ef18b3961f695e255604facb0b8651d2b1ee"), CoroutineGreeter::class.java)
+        greeter = etherSpace.create(SolAddress("0xa871c507184ecfaf947253e187826c1907e8dc7d"), CoroutineGreeter::class.java)
     }
 
     @Test

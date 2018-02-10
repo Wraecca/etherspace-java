@@ -5,10 +5,13 @@ import cc.etherspace.calladapter.PassThroughCallAdaptor
 import cc.etherspace.web3j.Web3jAdapter
 import okhttp3.OkHttpClient
 import org.web3j.crypto.Credentials
+import org.web3j.tx.Contract
+import org.web3j.tx.ManagedTransaction
 import java.io.IOException
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 import java.lang.reflect.Type
+import java.math.BigInteger
 
 class EtherSpace(private val web3: Web3jAdapter,
                  private val credentials: Credentials?,
@@ -24,16 +27,20 @@ class EtherSpace(private val web3: Web3jAdapter,
     private fun invokeFunction(smartContract: SolAddress,
                                method: Method,
                                args: List<Any>): Any {
+        val options = (args.firstOrNull { it is Options } ?: Options()) as Options
+        val params = args.filter { it !is Options }
         val callAdapter = callAdapters.first { it.adaptable(method.genericReturnType, method.annotations) }
         val actualReturnType = callAdapter.toActualReturnType(method.genericReturnType)
         return callAdapter.adapt {
             if (method.getAnnotation(View::class.java) != null || method.getAnnotation(Pure::class.java) != null) {
-                invokeViewFunction(smartContract, method.name, args, actualReturnType)
+                invokeViewFunction(smartContract, method.name, params, actualReturnType, options)
             } else {
                 invokeTransactionFunction(smartContract,
                         method.name,
-                        args,
-                        actualReturnType)
+                        params,
+                        actualReturnType,
+                        options
+                )
             }
         }
     }
@@ -42,7 +49,8 @@ class EtherSpace(private val web3: Web3jAdapter,
     private fun invokeTransactionFunction(smartContract: SolAddress,
                                           functionName: String,
                                           args: List<Any>,
-                                          returnType: java.lang.reflect.Type): String {
+                                          returnType: Type,
+                                          options: Options): String {
         val contractFunction = Web3.ContractFunction(functionName,
                 args,
                 returnType.listTupleActualTypes())
@@ -50,8 +58,9 @@ class EtherSpace(private val web3: Web3jAdapter,
         val nonce = web3.eth.getTransactionCount(credentials!!.address)
         val transactionObject = Web3.TransactionObject(credentials.address,
                 smartContract.address,
-                data = encodedFunction,
-                nonce = nonce)
+                encodedFunction,
+                options,
+                nonce)
         val transactionResponse = web3.eth.sendTransaction(transactionObject, credentials)
         if (transactionResponse.hasError()) {
             throw IOException("Error processing transaction request: " + transactionResponse.error.message)
@@ -63,14 +72,16 @@ class EtherSpace(private val web3: Web3jAdapter,
     private fun invokeViewFunction(smartContract: SolAddress,
                                    functionName: String,
                                    args: List<Any>,
-                                   returnType: Type): Any {
+                                   returnType: Type,
+                                   options: Options): Any {
         val contractFunction = Web3.ContractFunction(functionName,
                 args,
                 returnType.listTupleActualTypes())
         val encodedFunction = web3.abi.encodeFunctionCall(contractFunction.args, contractFunction.name)
         val transactionObject = Web3.TransactionObject(credentials!!.address,
                 smartContract.address,
-                data = encodedFunction)
+                encodedFunction,
+                options)
         val transactionResponse = web3.eth.call(transactionObject)
         if (transactionResponse.hasError()) {
             throw IOException("Error processing request: " + transactionResponse.error.message)
@@ -104,6 +115,10 @@ class EtherSpace(private val web3: Web3jAdapter,
                     callAdapters + PassThroughCallAdaptor())
         }
     }
+
+    data class Options(val value: BigInteger = BigInteger.ZERO,
+                       val gas: BigInteger = Contract.GAS_LIMIT,
+                       val gasPrice: BigInteger = ManagedTransaction.GAS_PRICE)
 
     companion object {
         inline fun build(block: Builder.() -> Unit) = Builder().apply(block).build()

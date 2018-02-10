@@ -14,6 +14,7 @@ import java.math.BigInteger
 import kotlin.reflect.KClass
 
 class Web3jAbi : Web3.Abi {
+    @Suppress("UNCHECKED_CAST")
     override fun decodeParameters(types: List<java.lang.reflect.Type>, hexString: String): List<Any> {
         return FunctionReturnDecoder.decode(hexString,
                 types.mapNotNull { toWeb3jType(it) } as List<TypeReference<Type<Any>>>)
@@ -71,6 +72,7 @@ class Web3jAbi : Web3.Abi {
         return createTypeReference(web3jType)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun toWeb3jStaticArrayTypeReference(typeToken: TypeToken<*>): TypeReference.StaticArrayTypeReference<Type<*>> {
         val parameterizedType = typeToken.resolveType(SolFixedArray::class.java.getMethod("get",
                 Int::class.java).genericReturnType)
@@ -79,6 +81,7 @@ class Web3jAbi : Web3.Abi {
         return createStaticArrayTypeReference(arrayToken(TypeToken.of(web3jType) as TypeToken<Type<*>>).type, size)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun toWeb3jArrayType(typeToken: TypeToken<*>): java.lang.reflect.Type {
         val parameterizedType = typeToken.resolveType(List::class.java.getMethod("get",
                 Int::class.java).genericReturnType)
@@ -148,18 +151,20 @@ class Web3jAbi : Web3.Abi {
         return isSubtypeOf(kClass.java)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T : NumericType> SolNumber.toWeb3jValue(): Type<T> = Class.forName(javaClass.name.replace("$SOL_TYPE_PACKAGE.Sol",
             "$WEB3J_ABI_DATATYPES_PACKAGE."))
             .getConstructor(BigInteger::class.java)
             .newInstance(value) as Type<T>
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T : SolNumber> NumericType.toSolValue(): T {
         return Class.forName(javaClass.name.replace("$WEB3J_ABI_DATATYPES_PACKAGE.",
                 "$SOL_TYPE_PACKAGE.Sol")).getConstructor(BigInteger::class.java).newInstance(value) as T
     }
 
     private fun TypeToken<*>.toSolTypeSize(): Int {
-        return "[a-zA-Z\\.]+(\\d)+<[\\w\\.]+>".toRegex().matchEntire(type.typeName)!!.groups[1]!!.value.toInt()
+        return "[a-zA-Z.]+(\\d)+<[\\w.]+>".toRegex().matchEntire(type.typeName)!!.groups[1]!!.value.toInt()
     }
 
     companion object {
