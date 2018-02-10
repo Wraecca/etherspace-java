@@ -1,15 +1,17 @@
 package cc.etherspace.web3j
 
-import cc.etherspace.UBigInteger
-import cc.etherspace.Web3
+import cc.etherspace.*
+import com.google.common.reflect.TypeParameter
+import com.google.common.reflect.TypeToken
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.*
-import java.lang.reflect.ParameterizedType
+import unsigned.toBigInt
 import java.math.BigInteger
+import kotlin.reflect.KClass
 
 class Web3jAbi : Web3.Abi {
     override fun decodeParameters(types: List<java.lang.reflect.Type>, hexString: String): List<Any> {
@@ -26,53 +28,85 @@ class Web3jAbi : Web3.Abi {
         return FunctionEncoder.encode(function)
     }
 
-    private fun toWeb3jType(type: java.lang.reflect.Type): TypeReference<out Type<out Any>> {
-        if (type is ParameterizedType) {
-            @Suppress("UNCHECKED_CAST")
-            val rawClass = type.rawType as Class<Any>
-            val web3jType = when {
-                List::class.java.isAssignableFrom(rawClass) -> {
-                    DynamicArray::class.java
-                }
-                else -> throw IllegalArgumentException()
-            }
-            return TypeReference.create(web3jType)
-        }
-
-        @Suppress("UNCHECKED_CAST")
-        val clazz = type as Class<Any>
-        val web3jType = when {
-            String::class.java.isAssignableFrom(clazz) -> Utf8String::class.java
-            Boolean::class.java.isAssignableFrom(clazz) -> Bool::class.java
-            BigInteger::class.java.isAssignableFrom(clazz) -> Int256::class.java
-            UBigInteger::class.java.isAssignableFrom(clazz) -> Uint256::class.java
-            cc.etherspace.SolInt24::class.java.isAssignableFrom(clazz) -> Int24::class.java
-            cc.etherspace.SolAddress::class.java.isAssignableFrom(clazz) -> Address::class.java
-            Byte::class.java.isAssignableFrom(clazz) -> Bytes1::class.java
-            cc.etherspace.SolBytes15::class.java.isAssignableFrom(clazz) -> Bytes15::class.java
-            cc.etherspace.SolBytes32::class.java.isAssignableFrom(clazz) -> Bytes32::class.java
-            ByteArray::class.java.isAssignableFrom(clazz) -> DynamicBytes::class.java
-            else -> throw IllegalArgumentException()
-        }
-        return TypeReference.create(web3jType)
-    }
-
     private fun toWeb3jValue(value: Any): Type<out Any> {
         return when (value) {
             is String -> Utf8String(value)
             is Boolean -> Bool(value)
             is BigInteger -> Int256(value)
             is UBigInteger -> Uint256(value.value)
-            is cc.etherspace.SolInt24 -> Int24(value.value.toBigInteger())
-            is cc.etherspace.SolAddress -> Address(value.address)
-            is List<*> -> {
-                DynamicArray(value.map { toWeb3jValue(it!!) })
-            }
+            is Short -> Int16(value.toBigInt())
+            is Int -> Int32(value.toBigInteger())
+            is Long -> Int64(value.toBigInteger())
+            is SolNumber -> value.toWeb3jValue()
+            is SolAddress -> Address(value.address)
             is Byte -> Bytes1(byteArrayOf(value))
-            is cc.etherspace.SolBytes15 -> Bytes15(value.value)
-            is cc.etherspace.SolBytes32 -> Bytes32(value.value)
+            is SolBytes15 -> Bytes15(value.value)
+            is SolBytes32 -> Bytes32(value.value)
             is ByteArray -> DynamicBytes(value)
+            is Array<*> -> StaticArray(value.map { toWeb3jValue(it!!) })
+            is SolFixedArray<*> -> StaticArray(value.value.map { toWeb3jValue(it!!) })
+            is List<*> -> DynamicArray(value.map { toWeb3jValue(it!!) })
             else -> throw IllegalArgumentException()
+        }
+    }
+
+    private fun toWeb3jType(type: java.lang.reflect.Type): TypeReference<out Type<out Any>> {
+        val typeToken = TypeToken.of(type)
+        @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
+        val web3jType = when {
+            typeToken.childOf(String::class) -> Utf8String::class.java
+            typeToken.childOf(Boolean::class) -> Bool::class.java
+            typeToken.childOf(BigInteger::class) -> Int256::class.java
+            typeToken.childOf(UBigInteger::class) -> Uint256::class.java
+            typeToken.childOf(SolNumber::class) -> typeToken.toWeb3jType()
+            typeToken.childOf(SolAddress::class) -> Address::class.java
+            typeToken.childOf(Byte::class) -> Bytes1::class.java
+            typeToken.childOf(SolBytes15::class) -> Bytes15::class.java
+            typeToken.childOf(SolBytes32::class) -> Bytes32::class.java
+            typeToken.childOf(ByteArray::class) -> DynamicBytes::class.java
+            typeToken.childOf(List::class) -> toWeb3jArrayType(typeToken)
+            typeToken.childOf(SolFixedArray::class) -> return toWeb3jStaticArrayTypeReference(typeToken)
+            else -> throw IllegalArgumentException()
+        }
+        return createTypeReference(web3jType)
+    }
+
+    private fun toWeb3jStaticArrayTypeReference(typeToken: TypeToken<*>): TypeReference.StaticArrayTypeReference<Type<*>> {
+        val parameterizedType = typeToken.resolveType(SolFixedArray::class.java.getMethod("get",
+                Int::class.java).genericReturnType)
+        val web3jType = toWeb3jType(parameterizedType.type).type
+        return createStaticArrayTypeReference(arrayToken(TypeToken.of(web3jType) as TypeToken<Type<*>>).type, 4)
+    }
+
+    private fun toWeb3jArrayType(typeToken: TypeToken<*>): java.lang.reflect.Type {
+        val parameterizedType = typeToken.resolveType(List::class.java.getMethod("get",
+                Int::class.java).genericReturnType)
+        val web3jType = toWeb3jType(parameterizedType.type).type
+        return listToken(TypeToken.of(web3jType) as TypeToken<Type<*>>).type
+    }
+
+    private fun <T : Type<*>> listToken(elementToken: TypeToken<T>): TypeToken<DynamicArray<T>> =
+            object : TypeToken<DynamicArray<T>>() {}
+                    .where(object : TypeParameter<T>() {}, elementToken)
+
+    private fun <T : Type<*>> arrayToken(elementToken: TypeToken<T>): TypeToken<StaticArray4<T>> =
+            object : TypeToken<StaticArray4<T>>() {}
+                    .where(object : TypeParameter<T>() {}, elementToken)
+
+    private fun <T : Type<*>> createStaticArrayTypeReference(type: java.lang.reflect.Type,
+                                                             size: Int): TypeReference.StaticArrayTypeReference<T> {
+        return object : TypeReference.StaticArrayTypeReference<T>(size) {
+            override fun getType(): java.lang.reflect.Type {
+                return type
+            }
+        }
+    }
+
+    fun <T : org.web3j.abi.datatypes.Type<*>> createTypeReference(type: java.lang.reflect.Type): TypeReference<T> {
+        return object : TypeReference<T>() {
+            override fun getType(): java.lang.reflect.Type {
+                return type
+            }
         }
     }
 
@@ -81,15 +115,39 @@ class Web3jAbi : Web3.Abi {
             is Utf8String -> value.value
             is Bool -> value.value
             is Int256 -> value.value
+            is Int64 -> value.value.toLong()
+            is Int32 -> value.value.toInt()
+            is Int16 -> value.value.toShort()
             is Uint256 -> UBigInteger(value.value)
-            is Int24 -> cc.etherspace.SolInt24(value.value.toInt())
+            is Uint64 -> value.value.toLong()
+            is Uint32 -> value.value.toInt()
+            is Uint16 -> value.value.toShort()
+            is NumericType -> value.toJavaValue()
             is Address -> cc.etherspace.SolAddress(value.value)
-            is DynamicArray<*> -> value.value
             is Bytes1 -> value.value[0]
             is Bytes15 -> cc.etherspace.SolBytes15(value.value)
             is Bytes32 -> cc.etherspace.SolBytes32(value.value)
             is DynamicBytes -> value.value
+            is StaticArray4<*> -> SolArray4(value.value.map { toJavaValue(it) }.toTypedArray())
+            is DynamicArray<*> -> value.value.map { toJavaValue(it) }
             else -> throw IllegalArgumentException()
         }
     }
+}
+
+fun TypeToken<out Any>.childOf(kClass: KClass<out Any>): Boolean {
+    return isSubtypeOf(kClass.java)
+}
+
+fun <T> TypeToken<T>.toWeb3jType(): Class<T> = Class.forName(type.typeName.replace("cc.etherspace.Sol",
+        "org.web3j.abi.datatypes.generated.")) as Class<T>
+
+fun <T : NumericType> SolNumber.toWeb3jValue(): Type<T> = Class.forName(javaClass.name.replace("cc.etherspace.Sol",
+        "org.web3j.abi.datatypes.generated."))
+        .getConstructor(BigInteger::class.java)
+        .newInstance(value) as Type<T>
+
+fun <T : SolNumber> NumericType.toJavaValue(): T {
+    return Class.forName(javaClass.name.replace("org.web3j.abi.datatypes.generated.",
+            "cc.etherspace.Sol")).getConstructor(BigInteger::class.java).newInstance(value) as T
 }

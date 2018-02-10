@@ -114,6 +114,19 @@ class Web3jAbiTest {
     }
 
     @Test
+    fun encodeFunctionCall_uint8Type() {
+        val enc = web3jAbi.encodeFunctionCall(listOf(SolUint8(10)), "uint8Type")
+        enc.`should equal to`("0xaf47a185000000000000000000000000000000000000000000000000000000000000000a")
+    }
+
+    @Test
+    fun decodeParameters_uint8() {
+        val list = web3jAbi.decodeParameters(listOf(SolUint8::class.java),
+                "000000000000000000000000000000000000000000000000000000000000000a")
+        list.`should equal`(listOf(SolUint8(10)))
+    }
+
+    @Test
     fun encodeFunctionCall_addressType() {
         val enc = web3jAbi.encodeFunctionCall(listOf(SolAddress("0xa871c507184ecfaf947253e187826c1907e8dc7d")),
                 "addressType")
@@ -139,10 +152,10 @@ class Web3jAbiTest {
 
     @Test
     fun decodeParameters_uints() {
-        val token = object : TypeToken<Array<UBigInteger>>() {}
+        val token = object : TypeToken<SolArray4<UBigInteger>>() {}
         val list = web3jAbi.decodeParameters(listOf(token.type),
                 "0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000004")
-        list.`should equal`(listOf(UBigInteger(1), UBigInteger(2), UBigInteger(3), UBigInteger(4)))
+        list.`should equal`(listOf(SolArray4(arrayOf(UBigInteger(1), UBigInteger(2), UBigInteger(3), UBigInteger(4)))))
     }
 
     @Test
@@ -157,7 +170,7 @@ class Web3jAbiTest {
         val token = object : TypeToken<List<BigInteger>>() {}
         val list = web3jAbi.decodeParameters(listOf(token.type),
                 "0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002")
-        list.`should equal`(listOf(BigInteger.valueOf(1), BigInteger.valueOf(2)))
+        list.`should equal`(listOf(listOf(1.toBigInteger(), 2.toBigInteger())))
     }
 
     @Test
