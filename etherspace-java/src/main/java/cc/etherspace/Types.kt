@@ -10,7 +10,9 @@ data class UBigInteger(var value: BigInteger) {
     constructor(i: Int) : this(i.toBigInteger())
 }
 
-sealed class SolNumber(val value: BigInteger, val bits: Int, val unsigned: Boolean) {
+interface SolType
+
+sealed class SolNumber(val value: BigInteger, val bits: Int, val unsigned: Boolean) : SolType {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -258,9 +260,9 @@ class SolUint248(value: BigInteger) : SolUint(value, 248) {
     constructor(i: Int) : this(i.toBigInteger())
 }
 
-data class SolAddress(val address: String)
+data class SolAddress(val address: String) : SolType
 
-sealed class SolBytes(val value: ByteArray, val size: Int) {
+sealed class SolBytes(val value: ByteArray, val size: Int) : SolType {
     init {
         require(value.size == size, { "The size of underling ByteArray is different from size" })
     }
@@ -317,19 +319,14 @@ class SolBytes30(value: ByteArray) : SolBytes(value, 30)
 class SolBytes31(value: ByteArray) : SolBytes(value, 31)
 class SolBytes32(value: ByteArray) : SolBytes(value, 32)
 
-interface SolFixedArray<T> {
-    val value: Array<T>
-    fun get(i: Int): T
-}
-
-data class SolArray4<T>(override val value: Array<T>) : SolFixedArray<T> {
-    override fun get(i: Int): T = value[i]
+sealed class SolFixedArray<T>(val value: Array<T>) : SolType {
+    fun get(i: Int): T = value[i]
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as SolArray4<*>
+        other as SolFixedArray<*>
 
         if (!Arrays.equals(value, other.value)) return false
 
@@ -339,5 +336,37 @@ data class SolArray4<T>(override val value: Array<T>) : SolFixedArray<T> {
     override fun hashCode(): Int {
         return Arrays.hashCode(value)
     }
-
 }
+
+class SolArray1<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray2<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray3<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray4<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray5<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray6<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray7<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray8<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray9<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray10<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray11<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray12<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray13<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray14<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray15<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray16<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray17<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray18<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray19<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray20<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray21<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray22<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray23<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray24<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray25<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray26<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray27<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray28<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray29<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray30<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray31<T>(value: Array<T>) : SolFixedArray<T>(value)
+class SolArray32<T>(value: Array<T>) : SolFixedArray<T>(value)

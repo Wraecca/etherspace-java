@@ -17,7 +17,7 @@ class Web3jAbi : Web3.Abi {
     override fun decodeParameters(types: List<java.lang.reflect.Type>, hexString: String): List<Any> {
         return FunctionReturnDecoder.decode(hexString,
                 types.mapNotNull { toWeb3jType(it) } as List<TypeReference<Type<Any>>>)
-                .map { toJavaValue(it) }
+                .map { toSolValue(it) }
     }
 
     override fun encodeFunctionCall(parameters: List<Any>,
@@ -43,8 +43,8 @@ class Web3jAbi : Web3.Abi {
             is SolBytes15 -> Bytes15(value.value)
             is SolBytes32 -> Bytes32(value.value)
             is ByteArray -> DynamicBytes(value)
-            is Array<*> -> StaticArray(value.map { toWeb3jValue(it!!) })
             is SolFixedArray<*> -> StaticArray(value.value.map { toWeb3jValue(it!!) })
+            is Array<*> -> StaticArray(value.map { toWeb3jValue(it!!) })
             is List<*> -> DynamicArray(value.map { toWeb3jValue(it!!) })
             else -> throw IllegalArgumentException()
         }
@@ -75,7 +75,8 @@ class Web3jAbi : Web3.Abi {
         val parameterizedType = typeToken.resolveType(SolFixedArray::class.java.getMethod("get",
                 Int::class.java).genericReturnType)
         val web3jType = toWeb3jType(parameterizedType.type).type
-        return createStaticArrayTypeReference(arrayToken(TypeToken.of(web3jType) as TypeToken<Type<*>>).type, 4)
+        val size = typeToken.toSolTypeSize()
+        return createStaticArrayTypeReference(arrayToken(TypeToken.of(web3jType) as TypeToken<Type<*>>).type, size)
     }
 
     private fun toWeb3jArrayType(typeToken: TypeToken<*>): java.lang.reflect.Type {
@@ -102,7 +103,7 @@ class Web3jAbi : Web3.Abi {
         }
     }
 
-    fun <T : org.web3j.abi.datatypes.Type<*>> createTypeReference(type: java.lang.reflect.Type): TypeReference<T> {
+    private fun <T : org.web3j.abi.datatypes.Type<*>> createTypeReference(type: java.lang.reflect.Type): TypeReference<T> {
         return object : TypeReference<T>() {
             override fun getType(): java.lang.reflect.Type {
                 return type
@@ -110,7 +111,7 @@ class Web3jAbi : Web3.Abi {
         }
     }
 
-    private fun toJavaValue(value: Type<Any>): Any {
+    private fun toSolValue(value: Type<Any>): Any {
         return when (value) {
             is Utf8String -> value.value
             is Bool -> value.value
@@ -122,32 +123,47 @@ class Web3jAbi : Web3.Abi {
             is Uint64 -> value.value.toLong()
             is Uint32 -> value.value.toInt()
             is Uint16 -> value.value.toShort()
-            is NumericType -> value.toJavaValue()
+            is NumericType -> value.toSolValue()
             is Address -> cc.etherspace.SolAddress(value.value)
             is Bytes1 -> value.value[0]
             is Bytes15 -> cc.etherspace.SolBytes15(value.value)
             is Bytes32 -> cc.etherspace.SolBytes32(value.value)
             is DynamicBytes -> value.value
-            is StaticArray4<*> -> SolArray4(value.value.map { toJavaValue(it) }.toTypedArray())
-            is DynamicArray<*> -> value.value.map { toJavaValue(it) }
+            is StaticArray<*> -> value.toSolFixedArray()
+            is DynamicArray<*> -> value.value.map { toSolValue(it) }
             else -> throw IllegalArgumentException()
         }
     }
-}
 
-fun TypeToken<out Any>.childOf(kClass: KClass<out Any>): Boolean {
-    return isSubtypeOf(kClass.java)
-}
+    private fun StaticArray<*>.toSolFixedArray(): SolFixedArray<*> {
+        val constructor = Class.forName(javaClass.name.replace("$WEB3J_ABI_DATATYPES_PACKAGE.Static",
+                "$SOL_TYPE_PACKAGE.Sol")).getConstructor(Array<Any>::class.java)
+        return constructor.newInstance(value.map { toSolValue(it) }.toTypedArray()) as SolFixedArray<*>
+    }
 
-fun <T> TypeToken<T>.toWeb3jType(): Class<T> = Class.forName(type.typeName.replace("cc.etherspace.Sol",
-        "org.web3j.abi.datatypes.generated.")) as Class<T>
+    private fun TypeToken<*>.toWeb3jType(): Class<*> = Class.forName(type.typeName.replace("$SOL_TYPE_PACKAGE.Sol",
+            "$WEB3J_ABI_DATATYPES_PACKAGE.")) as Class<*>
 
-fun <T : NumericType> SolNumber.toWeb3jValue(): Type<T> = Class.forName(javaClass.name.replace("cc.etherspace.Sol",
-        "org.web3j.abi.datatypes.generated."))
-        .getConstructor(BigInteger::class.java)
-        .newInstance(value) as Type<T>
+    private fun TypeToken<out Any>.childOf(kClass: KClass<out Any>): Boolean {
+        return isSubtypeOf(kClass.java)
+    }
 
-fun <T : SolNumber> NumericType.toJavaValue(): T {
-    return Class.forName(javaClass.name.replace("org.web3j.abi.datatypes.generated.",
-            "cc.etherspace.Sol")).getConstructor(BigInteger::class.java).newInstance(value) as T
+    private fun <T : NumericType> SolNumber.toWeb3jValue(): Type<T> = Class.forName(javaClass.name.replace("$SOL_TYPE_PACKAGE.Sol",
+            "$WEB3J_ABI_DATATYPES_PACKAGE."))
+            .getConstructor(BigInteger::class.java)
+            .newInstance(value) as Type<T>
+
+    private fun <T : SolNumber> NumericType.toSolValue(): T {
+        return Class.forName(javaClass.name.replace("$WEB3J_ABI_DATATYPES_PACKAGE.",
+                "$SOL_TYPE_PACKAGE.Sol")).getConstructor(BigInteger::class.java).newInstance(value) as T
+    }
+
+    private fun TypeToken<*>.toSolTypeSize(): Int {
+        return "[a-zA-Z\\.]+(\\d)+<[\\w\\.]+>".toRegex().matchEntire(type.typeName)!!.groups[1]!!.value.toInt()
+    }
+
+    companion object {
+        private val WEB3J_ABI_DATATYPES_PACKAGE = AbiTypes::class.java.`package`.name
+        private val SOL_TYPE_PACKAGE = SolType::class.java.`package`.name
+    }
 }
