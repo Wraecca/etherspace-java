@@ -1,7 +1,13 @@
 package cc.etherspace
 
 @Target(AnnotationTarget.FUNCTION)
-annotation class Pure
+@MustBeDocumented
+annotation class Call
 
 @Target(AnnotationTarget.FUNCTION)
-annotation class View
+@MustBeDocumented
+annotation class Send
+
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@MustBeDocumented
+annotation class Gas(val gas: String, val gasPrice: String)

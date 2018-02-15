@@ -3,48 +3,50 @@ package cc.etherspace
 import java.math.BigInteger
 
 interface Greeter {
+    @Send
     fun newGreeting(greeting: String): String
 
+    @Send
     fun newGreeting(greeting: String, options: EtherSpace.Options): String
 
-    @View
+    @Call
     fun greet(): String
 
     fun newPersonalGreeting(from: String, greeting: String): String
 
-    @View
+    @Call
     fun personalGreet(): Pair<String, String>
 
-    @View
+    @Call
     fun multipleReturns(): Tuple7<String, String, String, String, String, String, String>
 
-    @View
+    @Call
     fun boolType(bool: Boolean): Boolean
 
-    @View
+    @Call
     fun intType(int: BigInteger): BigInteger
 
-    @View
+    @Call
     fun uintType(int: UBigInteger): UBigInteger
 
-    @View
+    @Call
     fun int24Type(solInt: SolInt24): SolInt24
 
-    @View
+    @Call
     fun addressType(solAddress: SolAddress): SolAddress
 
-    @View
+    @Call
     fun uintsType(uints: List<UBigInteger>): List<UBigInteger>
 
-    @View
+    @Call
     fun byteType(byte: Byte): Byte
 
-    @View
+    @Call
     fun bytes15Type(aByte: SolBytes15): SolBytes15
 
-    @View
+    @Call
     fun bytes32Type(aByte: SolBytes32): SolBytes32
 
-    @View
+    @Call
     fun bytesType(byte: ByteArray): ByteArray
 }

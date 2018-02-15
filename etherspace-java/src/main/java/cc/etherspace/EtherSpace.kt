@@ -8,6 +8,7 @@ import org.web3j.crypto.Credentials
 import org.web3j.tx.Contract
 import org.web3j.tx.ManagedTransaction
 import java.io.IOException
+import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 import java.lang.reflect.Type
@@ -18,31 +19,46 @@ class EtherSpace(private val web3: Web3jAdapter,
                  private val callAdapters: List<CallAdapter<Any, Any>>) {
     @Suppress("UNCHECKED_CAST")
     fun <T> create(smartContract: SolAddress, service: Class<T>): T {
+        val defaultOptions = createOptionsFromAnnotation(service)
         return Proxy.newProxyInstance(service.classLoader, arrayOf(service)) { proxy, method, args ->
-            invokeFunction(smartContract, method, args?.toList() ?: emptyList())
+            invokeFunction(smartContract, method, args?.toList() ?: emptyList(), defaultOptions)
         } as T
     }
 
     @Throws(IOException::class)
     private fun invokeFunction(smartContract: SolAddress,
                                method: Method,
-                               args: List<Any>): Any {
-        val options = (args.firstOrNull { it is Options } ?: Options()) as Options
+                               args: List<Any>,
+                               defaultOptions: Options): Any {
+        val options = (args.firstOrNull { it is Options } ?: createOptionsFromAnnotation(method,
+                defaultOptions)) as Options
         val params = args.filter { it !is Options }
         val callAdapter = callAdapters.first { it.adaptable(method.genericReturnType, method.annotations) }
         val actualReturnType = callAdapter.toActualReturnType(method.genericReturnType)
         return callAdapter.adapt {
-            if (method.getAnnotation(View::class.java) != null || method.getAnnotation(Pure::class.java) != null) {
-                invokeViewFunction(smartContract, method.name, params, actualReturnType, options)
-            } else {
-                invokeTransactionFunction(smartContract,
+            when {
+                method.getAnnotation(Call::class.java) != null -> invokeViewFunction(smartContract,
+                        method.name,
+                        params,
+                        actualReturnType,
+                        options)
+                method.getAnnotation(Send::class.java) != null -> invokeTransactionFunction(smartContract,
                         method.name,
                         params,
                         actualReturnType,
                         options
                 )
+                else -> {
+                    throw IllegalArgumentException("There is no Send/Call annotation on this method")
+                }
             }
         }
+    }
+
+    private fun createOptionsFromAnnotation(annotated: AnnotatedElement,
+                                            defaultOptions: Options = Options()): Options {
+        val g = annotated.getAnnotation(Gas::class.java)
+        return g?.let { Options(gas = g.gas.toBigInteger(), gasPrice = g.gasPrice.toBigInteger()) } ?: defaultOptions
     }
 
     @Throws(IOException::class)
