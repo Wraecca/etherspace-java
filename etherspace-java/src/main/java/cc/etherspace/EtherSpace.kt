@@ -3,11 +3,13 @@ package cc.etherspace
 import cc.etherspace.calladapter.CallAdapter
 import cc.etherspace.calladapter.PassThroughCallAdaptor
 import cc.etherspace.web3j.Web3jAdapter
+import com.google.common.reflect.TypeToken
 import okhttp3.OkHttpClient
 import org.web3j.crypto.Credentials
 import org.web3j.tx.Contract
 import org.web3j.tx.ManagedTransaction
 import java.io.IOException
+import java.lang.Thread.sleep
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
@@ -66,8 +68,8 @@ class EtherSpace(private val web3: Web3jAdapter,
                                           functionName: String,
                                           args: List<Any>,
                                           returnType: Type,
-                                          options: Options): String {
-        val contractFunction = Web3.ContractFunction(functionName,
+                                          options: Options): Any {
+        val contractFunction = ContractFunction(functionName,
                 args,
                 returnType.listTupleActualTypes())
         val encodedFunction = web3.abi.encodeFunctionCall(contractFunction.args, contractFunction.name)
@@ -77,11 +79,25 @@ class EtherSpace(private val web3: Web3jAdapter,
                 encodedFunction,
                 options,
                 nonce)
-        val transactionResponse = web3.eth.sendTransaction(transactionObject, credentials)
-        if (transactionResponse.hasError()) {
-            throw IOException("Error processing transaction request: " + transactionResponse.error.message)
+        val response = web3.eth.sendTransaction(transactionObject, credentials)
+        if (response.hasError()) {
+            throw IOException("Error processing transaction request: " + response.error.message)
         }
-        return transactionResponse.transactionHash
+        val returnTypeToken = TypeToken.of(returnType)
+        when {
+            returnTypeToken.isSubtypeOf(String::class.java) -> return response.transactionHash
+            returnTypeToken.isSubtypeOf(Web3.TransactionReceipt::class.java) -> {
+                for (i in 1..GET_TRANSACTION_RECEIPT_POLLING_ATTEMPTS) {
+                    val transactionReceipt = web3.eth.getTransactionReceipt(response.transactionHash)
+                    if (transactionReceipt != null) {
+                        return transactionReceipt
+                    }
+                    sleep(GET_TRANSACTION_RECEIPT_POLLING_INTERVAL_IN_MS)
+                }
+                throw IOException("Unable to get transaction receipt")
+            }
+            else -> throw IllegalArgumentException("Unknown return type")
+        }
     }
 
     @Throws(IOException::class)
@@ -90,7 +106,7 @@ class EtherSpace(private val web3: Web3jAdapter,
                                    args: List<Any>,
                                    returnType: Type,
                                    options: Options): Any {
-        val contractFunction = Web3.ContractFunction(functionName,
+        val contractFunction = ContractFunction(functionName,
                 args,
                 returnType.listTupleActualTypes())
         val encodedFunction = web3.abi.encodeFunctionCall(contractFunction.args, contractFunction.name)
@@ -136,7 +152,14 @@ class EtherSpace(private val web3: Web3jAdapter,
                        val gas: BigInteger = Contract.GAS_LIMIT,
                        val gasPrice: BigInteger = ManagedTransaction.GAS_PRICE)
 
+
+    private data class ContractFunction(val name: String,
+                                        val args: List<Any>,
+                                        val returnTypes: List<Type>)
+
     companion object {
         inline fun build(block: Builder.() -> Unit) = Builder().apply(block).build()
+        private const val GET_TRANSACTION_RECEIPT_POLLING_INTERVAL_IN_MS = 1_000L
+        private const val GET_TRANSACTION_RECEIPT_POLLING_ATTEMPTS = 40
     }
 }

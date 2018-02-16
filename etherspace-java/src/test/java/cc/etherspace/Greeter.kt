@@ -4,7 +4,7 @@ import java.math.BigInteger
 
 interface Greeter {
     @Send
-    fun newGreeting(greeting: String): String
+    fun newGreeting(greeting: String): Web3.TransactionReceipt
 
     @Send
     fun newGreeting(greeting: String, options: EtherSpace.Options): String

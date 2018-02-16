@@ -33,12 +33,9 @@ interface Web3 {
                             credentials: Credentials): EthSendTransaction
 
         fun sendSignedTransaction(signedTransactionData: String): EthSendTransaction
+
+        fun getTransactionReceipt(transactionHash: String): TransactionReceipt?
     }
-
-    data class ContractFunction(val name: String,
-                                val args: List<Any>,
-                                val returnTypes: List<Type>)
-
 
     data class TransactionObject(val from: String,
                                  val to: String,
@@ -59,4 +56,24 @@ interface Web3 {
                 data,
                 nonce)
     }
+
+    data class Log(val address: String,
+                   val data: String,
+                   val topics: List<String>,
+                   val logIndex: BigInteger,
+                   val transactionIndex: BigInteger,
+                   val transactionHash: String,
+                   val blockHash: String,
+                   val blockNumber: BigInteger)
+
+    data class TransactionReceipt(val blockHash: String,
+                                  val blockNumber: BigInteger,
+                                  val transactionHash: String,
+                                  val transactionIndex: BigInteger,
+                                  val from: String,
+                                  val to: String,
+                                  val contractAddress: String?,
+                                  val cumulativeGasUsed: BigInteger,
+                                  val gasUsed: BigInteger,
+                                  val logs: List<Log>)
 }

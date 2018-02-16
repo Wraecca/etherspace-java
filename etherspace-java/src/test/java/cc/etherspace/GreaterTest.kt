@@ -1,5 +1,6 @@
 package cc.etherspace
 
+import org.amshove.kluent.`should be greater than`
 import org.amshove.kluent.`should equal to`
 import org.amshove.kluent.`should equal`
 import org.junit.Before
@@ -24,8 +25,12 @@ class GreaterTest {
 
     @Test
     fun newGreeting() {
-        val transactionHash = greeter.newGreeting("Hello World")
-        transactionHash.length.`should equal to`(66)
+        val receipt = greeter.newGreeting("Hello World")
+        receipt.blockHash.length.`should equal to`(66)
+        receipt.transactionHash.length.`should equal to`(66)
+        receipt.from.`should equal to`("0x39759a3c0ada2d61b6ca8eb6afc8243075307ed3")
+        receipt.to.`should equal to`("0xa871c507184ecfaf947253e187826c1907e8dc7d")
+        receipt.logs.size.`should be greater than`(0)
     }
 
     @Test(expected = IOException::class)

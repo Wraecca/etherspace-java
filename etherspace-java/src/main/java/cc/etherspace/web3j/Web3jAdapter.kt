@@ -10,6 +10,8 @@ import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.core.methods.response.EthCall
 import org.web3j.protocol.core.methods.response.EthSendTransaction
+import org.web3j.protocol.core.methods.response.Log
+import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.protocol.http.HttpService
 import org.web3j.utils.Numeric
 import java.io.IOException
@@ -25,6 +27,38 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
     override val eth: Web3jEth = Web3jEth()
 
     inner class Web3jEth : Web3.Eth {
+        override fun getTransactionReceipt(transactionHash: String): Web3.TransactionReceipt? {
+            val response = web3j.ethGetTransactionReceipt(transactionHash).send()
+            if (response.hasError()) {
+                throw IOException("Error processing request: " + response.error.message)
+            }
+            return response.transactionReceipt.map { it.toWeb3TransactionReceipt() }.orElse(null)
+        }
+
+        private fun TransactionReceipt.toWeb3TransactionReceipt(): Web3.TransactionReceipt {
+            return Web3.TransactionReceipt(blockHash,
+                    blockNumber,
+                    transactionHash,
+                    transactionIndex,
+                    from,
+                    to,
+                    contractAddress,
+                    cumulativeGasUsed,
+                    gasUsed,
+                    logs.map { it.toWeb3Log() })
+        }
+
+        private fun Log.toWeb3Log(): Web3.Log {
+            return Web3.Log(address,
+                    data,
+                    topics,
+                    logIndex,
+                    transactionIndex,
+                    transactionHash,
+                    blockHash,
+                    blockNumber)
+        }
+
         override fun call(transactionObject: Web3.TransactionObject,
                           blockParameter: DefaultBlockParameter): EthCall {
             val transaction = Transaction.createEthCallTransaction(transactionObject.from,
