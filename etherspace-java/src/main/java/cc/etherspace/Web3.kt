@@ -54,7 +54,7 @@ interface Web3 {
         constructor(from: String?,
                     to: String,
                     data: String,
-                    options: EtherSpace.Options,
+                    options: Options,
                     nonce: BigInteger? = null) : this(from,
                 to,
                 options.value,

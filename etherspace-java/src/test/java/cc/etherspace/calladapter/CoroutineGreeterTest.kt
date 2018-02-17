@@ -1,6 +1,9 @@
 package cc.etherspace.calladapter
 
-import cc.etherspace.*
+import cc.etherspace.Credentials
+import cc.etherspace.EtherSpace
+import cc.etherspace.SolAddress
+import cc.etherspace.SolBytes32
 import kotlinx.coroutines.experimental.runBlocking
 import org.amshove.kluent.`should be greater than`
 import org.amshove.kluent.`should equal to`
@@ -33,7 +36,7 @@ class CoroutineGreeterTest {
             receipt.to.`should equal to`("0xa871c507184ecfaf947253e187826c1907e8dc7d")
             receipt.logs.size.`should be greater than`(0)
 
-            val events = receipt.listEvents(Greeter.Modified::class.java)
+            val events = receipt.listEvents(CoroutineGreeter.Modified::class.java)
             events.size.`should equal to`(1)
             events[0].event.`should equal to`("Modified")
             events[0].returnValue.oldGreeting.`should equal to`("Hello World")
@@ -51,7 +54,6 @@ class CoroutineGreeterTest {
         }
     }
 
-    @Test
     fun newPersonalGreeting() {
         runBlocking {
             val transactionHash = greeter.newPersonalGreeting("tempo", "Hello World").await()

@@ -5,29 +5,26 @@ import cc.etherspace.calladapter.PassThroughCallAdaptor
 import cc.etherspace.web3j.Web3jAdapter
 import com.google.common.reflect.TypeToken
 import okhttp3.OkHttpClient
-import org.web3j.tx.Contract
-import org.web3j.tx.ManagedTransaction
 import java.io.IOException
 import java.lang.Thread.sleep
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 import java.lang.reflect.Type
-import java.math.BigInteger
 
 class EtherSpace(private val web3: Web3jAdapter,
                  private val credentials: Credentials?,
                  private val callAdapters: List<CallAdapter<Any, Any>>) {
     @Suppress("UNCHECKED_CAST")
-    fun <T> create(smartContract: SolAddress, service: Class<T>): T {
+    fun <T> create(toAddress: String, service: Class<T>): T {
         val defaultOptions = createOptionsFromAnnotation(service)
-        return Proxy.newProxyInstance(service.classLoader, arrayOf(service)) { proxy, method, args ->
-            invokeFunction(smartContract, method, args?.toList() ?: emptyList(), defaultOptions)
+        return Proxy.newProxyInstance(service.classLoader, arrayOf(service)) { _, method, args ->
+            invokeFunction(toAddress, method, args?.toList() ?: emptyList(), defaultOptions)
         } as T
     }
 
     @Throws(IOException::class)
-    private fun invokeFunction(smartContract: SolAddress,
+    private fun invokeFunction(toAddress: String,
                                method: Method,
                                args: List<Any>,
                                defaultOptions: Options): Any {
@@ -37,22 +34,28 @@ class EtherSpace(private val web3: Web3jAdapter,
         val callAdapter = callAdapters.first { it.adaptable(method.genericReturnType, method.annotations) }
         val actualReturnType = callAdapter.toActualReturnType(method.genericReturnType)
         return callAdapter.adapt {
-            when {
-                method.getAnnotation(Call::class.java) != null -> invokeViewFunction(smartContract,
-                        method.name,
+            val callAnnotation = method.getAnnotation(Call::class.java)
+            if (callAnnotation != null) {
+                val functionName = callAnnotation.functionName
+                return@adapt invokeViewFunction(toAddress,
+                        if (functionName.isNotBlank()) functionName else method.name,
                         params,
                         actualReturnType,
                         options)
-                method.getAnnotation(Send::class.java) != null -> invokeTransactionFunction(smartContract,
-                        method.name,
+            }
+
+            val sendAnnotation = method.getAnnotation(Send::class.java)
+            if (sendAnnotation != null) {
+                val functionName = sendAnnotation.functionName
+                return@adapt invokeTransactionFunction(toAddress,
+                        if (functionName.isNotBlank()) functionName else method.name,
                         params,
                         actualReturnType,
                         options
                 )
-                else -> {
-                    throw IllegalArgumentException("There is no Send/Call annotation on this method")
-                }
             }
+            
+            throw IllegalArgumentException("There is no Send/Call annotation on this method")
         }
     }
 
@@ -64,7 +67,7 @@ class EtherSpace(private val web3: Web3jAdapter,
             } ?: defaultOptions
 
     @Throws(IOException::class)
-    private fun invokeTransactionFunction(smartContract: SolAddress,
+    private fun invokeTransactionFunction(toAddress: String,
                                           functionName: String,
                                           args: List<Any>,
                                           returnType: Type,
@@ -76,7 +79,7 @@ class EtherSpace(private val web3: Web3jAdapter,
         val encodedFunction = web3.abi.encodeFunctionCall(contractFunction.args, contractFunction.name)
         val nonce = web3.eth.getTransactionCount(cd.address)
         val transactionObject = Web3.TransactionObject(cd.address,
-                smartContract.address,
+                toAddress,
                 encodedFunction,
                 options,
                 nonce)
@@ -99,7 +102,7 @@ class EtherSpace(private val web3: Web3jAdapter,
     }
 
     @Throws(IOException::class)
-    private fun invokeViewFunction(smartContract: SolAddress,
+    private fun invokeViewFunction(toAddress: String,
                                    functionName: String,
                                    args: List<Any>,
                                    returnType: Type,
@@ -109,7 +112,7 @@ class EtherSpace(private val web3: Web3jAdapter,
                 returnType.listTupleActualTypes())
         val encodedFunction = web3.abi.encodeFunctionCall(contractFunction.args, contractFunction.name)
         val transactionObject = Web3.TransactionObject(null,
-                smartContract.address,
+                toAddress,
                 encodedFunction,
                 options)
         val data = web3.eth.call(transactionObject)
@@ -117,7 +120,7 @@ class EtherSpace(private val web3: Web3jAdapter,
         return returnType.createTupleInstance(values)
     }
 
-    @Suppress("unused")
+    @Suppress("unused", "MemberVisibilityCanBePrivate")
     class Builder {
         var provider: String = "http://localhost:8545/"
 
@@ -142,11 +145,6 @@ class EtherSpace(private val web3: Web3jAdapter,
                     callAdapters + PassThroughCallAdaptor())
         }
     }
-
-    data class Options(val value: BigInteger = BigInteger.ZERO,
-                       val gas: BigInteger = Contract.GAS_LIMIT,
-                       val gasPrice: BigInteger = ManagedTransaction.GAS_PRICE,
-                       val credentials: Credentials? = null)
 
     private data class ContractFunction(val name: String,
                                         val args: List<Any>,

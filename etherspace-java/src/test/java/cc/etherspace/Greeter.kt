@@ -7,7 +7,7 @@ interface Greeter {
     fun newGreeting(greeting: String): TransactionReceipt
 
     @Send
-    fun newGreeting(greeting: String, options: EtherSpace.Options): String
+    fun newGreeting(greeting: String, options: Options): String
 
     @Call
     fun greet(): String

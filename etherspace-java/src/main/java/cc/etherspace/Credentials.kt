@@ -11,6 +11,7 @@ import java.io.File
 import java.math.BigInteger
 import java.nio.charset.Charset
 
+@Suppress("unused")
 class Credentials {
     val address: String
     val privateKey: String

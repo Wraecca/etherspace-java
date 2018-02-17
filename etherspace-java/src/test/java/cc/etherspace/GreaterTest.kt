@@ -5,8 +5,6 @@ import org.amshove.kluent.`should equal to`
 import org.amshove.kluent.`should equal`
 import org.junit.Before
 import org.junit.Test
-import org.web3j.crypto.Credentials
-import org.web3j.crypto.ECKeyPair
 import org.web3j.utils.Numeric
 import java.io.IOException
 import java.math.BigInteger
@@ -44,7 +42,7 @@ class GreaterTest {
     @Test(expected = IOException::class)
     fun newGreeting_options() {
         val transactionHash = greeter.newGreeting("Hello World",
-                EtherSpace.Options(gas = BigInteger.valueOf(44_000_000_000L)))
+                Options(gas = BigInteger.valueOf(44_000_000_000L)))
         transactionHash.length.`should equal to`(66)
     }
 

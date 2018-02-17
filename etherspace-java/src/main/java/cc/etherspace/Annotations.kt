@@ -4,11 +4,11 @@ import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
-annotation class Call
+annotation class Call(val functionName: String = "")
 
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
-annotation class Send
+annotation class Send(val functionName: String = "")
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @MustBeDocumented
