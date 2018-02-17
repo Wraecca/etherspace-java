@@ -2,6 +2,7 @@ package cc.etherspace.web3j
 
 import cc.etherspace.Event
 import cc.etherspace.Web3
+import com.fasterxml.jackson.annotation.JsonValue
 import okhttp3.OkHttpClient
 import org.web3j.crypto.Credentials
 import org.web3j.crypto.RawTransaction
@@ -9,8 +10,6 @@ import org.web3j.crypto.TransactionEncoder
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.methods.request.Transaction
-import org.web3j.protocol.core.methods.response.EthCall
-import org.web3j.protocol.core.methods.response.EthSendTransaction
 import org.web3j.protocol.core.methods.response.Log
 import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.protocol.http.HttpService
@@ -61,17 +60,19 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
                     blockNumber)
         }
 
-        override fun call(transactionObject: Web3.TransactionObject,
-                          blockParameter: DefaultBlockParameter): EthCall {
+        override fun call(transactionObject: Web3.TransactionObject, defaultBlock: Web3.DefaultBlock): String {
             val transaction = Transaction.createEthCallTransaction(transactionObject.from,
                     transactionObject.to,
                     transactionObject.data)
-            return web3j.ethCall(transaction, blockParameter).send()
+            val response = web3j.ethCall(transaction, defaultBlock.toDefaultBlockParameter()).send()
+            if (response.hasError()) {
+                throw IOException("Error processing request: " + response.error.message)
+            }
+            return response.value
         }
 
-        override fun getTransactionCount(address: String,
-                                         blockParameter: DefaultBlockParameter): BigInteger {
-            val response = web3j.ethGetTransactionCount(address, blockParameter).send()
+        override fun getTransactionCount(address: String, defaultBlock: Web3.DefaultBlock): BigInteger {
+            val response = web3j.ethGetTransactionCount(address, defaultBlock.toDefaultBlockParameter()).send()
             if (response.hasError()) {
                 throw IOException("Error processing request: " + response.error.message)
             }
@@ -87,13 +88,18 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
         }
 
         override fun sendTransaction(transactionObject: Web3.TransactionObject,
-                                     credentials: cc.etherspace.Credentials): EthSendTransaction {
+                                     credentials: cc.etherspace.Credentials): String {
             val signTransaction = signTransaction(transactionObject, credentials)
             return sendSignedTransaction(signTransaction)
         }
 
-        override fun sendSignedTransaction(signedTransactionData: String): EthSendTransaction =
-                web3j.ethSendRawTransaction(signedTransactionData).send()
+        override fun sendSignedTransaction(signedTransactionData: String): String {
+            val response = web3j.ethSendRawTransaction(signedTransactionData).send()
+            if (response.hasError()) {
+                throw IOException("Error processing transaction request: " + response.error.message)
+            }
+            return response.transactionHash
+        }
 
         private fun Web3.TransactionObject.toRawTransaction(): RawTransaction = RawTransaction.createTransaction(nonce,
                 gasPrice,
@@ -103,6 +109,16 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
                 data)
 
         private fun cc.etherspace.Credentials.toWeb3jCredentials(): Credentials = Credentials.create(privateKey)
+
+        @Suppress("ObjectLiteralToLambda")
+        private fun Web3.DefaultBlock.toDefaultBlockParameter(): DefaultBlockParameter {
+            return object : DefaultBlockParameter {
+                @JsonValue
+                override fun getValue(): String {
+                    return this@toDefaultBlockParameter.value
+                }
+            }
+        }
     }
 
     data class TransactionReceiptImpl(override val blockHash: String,

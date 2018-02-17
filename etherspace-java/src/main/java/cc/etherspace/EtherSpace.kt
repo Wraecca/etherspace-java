@@ -80,16 +80,13 @@ class EtherSpace(private val web3: Web3jAdapter,
                 encodedFunction,
                 options,
                 nonce)
-        val response = web3.eth.sendTransaction(transactionObject, cd)
-        if (response.hasError()) {
-            throw IOException("Error processing transaction request: " + response.error.message)
-        }
+        val transactionHash = web3.eth.sendTransaction(transactionObject, cd)
         val returnTypeToken = TypeToken.of(returnType)
         when {
-            returnTypeToken.isSubtypeOf(String::class.java) -> return response.transactionHash
+            returnTypeToken.isSubtypeOf(String::class.java) -> return transactionHash
             returnTypeToken.isSubtypeOf(TransactionReceipt::class.java) -> {
                 for (i in 1..GET_TRANSACTION_RECEIPT_POLLING_ATTEMPTS) {
-                    val transactionReceipt = web3.eth.getTransactionReceipt(response.transactionHash)
+                    val transactionReceipt = web3.eth.getTransactionReceipt(transactionHash)
                     if (transactionReceipt != null) {
                         return transactionReceipt
                     }
@@ -115,11 +112,8 @@ class EtherSpace(private val web3: Web3jAdapter,
                 smartContract.address,
                 encodedFunction,
                 options)
-        val transactionResponse = web3.eth.call(transactionObject)
-        if (transactionResponse.hasError()) {
-            throw IOException("Error processing request: " + transactionResponse.error.message)
-        }
-        val values = web3.abi.decodeParameters(contractFunction.returnTypes, transactionResponse.value)
+        val data = web3.eth.call(transactionObject)
+        val values = web3.abi.decodeParameters(contractFunction.returnTypes, data)
         return returnType.createTupleInstance(values)
     }
 

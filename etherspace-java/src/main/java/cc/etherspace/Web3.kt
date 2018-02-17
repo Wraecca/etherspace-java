@@ -1,11 +1,8 @@
 package cc.etherspace
 
-import org.web3j.protocol.core.DefaultBlockParameter
-import org.web3j.protocol.core.DefaultBlockParameterName
-import org.web3j.protocol.core.methods.response.EthCall
-import org.web3j.protocol.core.methods.response.EthSendTransaction
 import org.web3j.tx.Contract
 import org.web3j.tx.ManagedTransaction
+import org.web3j.utils.Numeric
 import java.lang.reflect.Type
 import java.math.BigInteger
 
@@ -24,20 +21,27 @@ interface Web3 {
     }
 
     interface Eth {
-        fun call(transactionObject: TransactionObject,
-                 blockParameter: DefaultBlockParameter = DefaultBlockParameterName.LATEST): EthCall
+        fun call(transactionObject: TransactionObject, defaultBlock: DefaultBlock = DefaultBlock.LATEST): String
 
-        fun getTransactionCount(address: String,
-                                blockParameter: DefaultBlockParameter = DefaultBlockParameterName.LATEST): BigInteger
+        fun getTransactionCount(address: String, defaultBlock: DefaultBlock = DefaultBlock.LATEST): BigInteger
 
         fun signTransaction(transactionObject: TransactionObject, credentials: Credentials): String
 
-        fun sendTransaction(transactionObject: TransactionObject,
-                            credentials: Credentials): EthSendTransaction
+        fun sendTransaction(transactionObject: TransactionObject, credentials: Credentials): String
 
-        fun sendSignedTransaction(signedTransactionData: String): EthSendTransaction
+        fun sendSignedTransaction(signedTransactionData: String): String
 
         fun getTransactionReceipt(transactionHash: String): TransactionReceipt?
+    }
+
+    data class DefaultBlock(val value: String) {
+        constructor(blockNumber: BigInteger) : this(Numeric.encodeQuantity(blockNumber))
+
+        companion object {
+            val EARLIEST = DefaultBlock("earliest")
+            val LATEST = DefaultBlock("latest")
+            val PENDING = DefaultBlock("pending")
+        }
     }
 
     data class TransactionObject(val from: String?,

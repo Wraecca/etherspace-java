@@ -1,12 +1,15 @@
 package cc.etherspace
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.common.io.Files
 import org.web3j.crypto.Keys
 import org.web3j.crypto.Sign
 import org.web3j.crypto.Wallet
 import org.web3j.crypto.WalletFile
 import org.web3j.utils.Numeric
+import java.io.File
 import java.math.BigInteger
+import java.nio.charset.Charset
 
 class Credentials {
     val address: String
@@ -23,6 +26,9 @@ class Credentials {
         this.address = toAddress(ecKeyPair.publicKey)
         this.privateKey = Numeric.toHexStringWithPrefix(ecKeyPair.privateKey)
     }
+
+    constructor(password: String, file: File) :
+            this(password, Files.asCharSource(file, Charset.forName("UTF-8")).read())
 
     private fun toAddress(privateKey: String): String =
             toAddress(Sign.publicKeyFromPrivate(Numeric.toBigInt(privateKey)))
