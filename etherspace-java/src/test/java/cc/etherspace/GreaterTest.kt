@@ -18,8 +18,7 @@ class GreaterTest {
     fun setUp() {
         val etherSpace = EtherSpace.build {
             provider = "https://rinkeby.infura.io/3teU4WimZ2pbdjPUDpPW"
-            credentials = Credentials.create(ECKeyPair.create(
-                    BigInteger("77398679111088585283982189543320298238063257726010371587476264149399587362827")))
+            credentials = Credentials("0xab1e199623aa5bb2c381c349b1734e31b5be08de0486ffab68e3af4853d9980b")
         }
         greeter = etherSpace.create(SolAddress("0xa871c507184ecfaf947253e187826c1907e8dc7d"), Greeter::class.java)
     }

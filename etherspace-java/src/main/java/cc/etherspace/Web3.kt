@@ -1,6 +1,5 @@
 package cc.etherspace
 
-import org.web3j.crypto.Credentials
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.response.EthCall
@@ -41,14 +40,14 @@ interface Web3 {
         fun getTransactionReceipt(transactionHash: String): TransactionReceipt?
     }
 
-    data class TransactionObject(val from: String,
+    data class TransactionObject(val from: String?,
                                  val to: String,
                                  val value: BigInteger = BigInteger.ZERO,
                                  val gas: BigInteger = Contract.GAS_LIMIT,
                                  val gasPrice: BigInteger = ManagedTransaction.GAS_PRICE,
                                  val data: String,
                                  val nonce: BigInteger? = null) {
-        constructor(from: String,
+        constructor(from: String?,
                     to: String,
                     data: String,
                     options: EtherSpace.Options,

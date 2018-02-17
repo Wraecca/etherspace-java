@@ -5,7 +5,6 @@ import cc.etherspace.calladapter.PassThroughCallAdaptor
 import cc.etherspace.web3j.Web3jAdapter
 import com.google.common.reflect.TypeToken
 import okhttp3.OkHttpClient
-import org.web3j.crypto.Credentials
 import org.web3j.tx.Contract
 import org.web3j.tx.ManagedTransaction
 import java.io.IOException
@@ -58,10 +57,11 @@ class EtherSpace(private val web3: Web3jAdapter,
     }
 
     private fun createOptionsFromAnnotation(annotated: AnnotatedElement,
-                                            defaultOptions: Options = Options()): Options {
-        val g = annotated.getAnnotation(Gas::class.java)
-        return g?.let { Options(gas = g.gas.toBigInteger(), gasPrice = g.gasPrice.toBigInteger()) } ?: defaultOptions
-    }
+                                            defaultOptions: Options = Options()): Options =
+            annotated.getAnnotation(Gas::class.java)?.let {
+                Options(gas = it.gas.toBigInteger(),
+                        gasPrice = it.gasPrice.toBigInteger())
+            } ?: defaultOptions
 
     @Throws(IOException::class)
     private fun invokeTransactionFunction(smartContract: SolAddress,
@@ -69,17 +69,18 @@ class EtherSpace(private val web3: Web3jAdapter,
                                           args: List<Any>,
                                           returnType: Type,
                                           options: Options): Any {
+        val cd = options.credentials ?: credentials ?: throw IllegalArgumentException("Credentials not set")
         val contractFunction = ContractFunction(functionName,
                 args,
                 returnType.listTupleActualTypes())
         val encodedFunction = web3.abi.encodeFunctionCall(contractFunction.args, contractFunction.name)
-        val nonce = web3.eth.getTransactionCount(credentials!!.address)
-        val transactionObject = Web3.TransactionObject(credentials.address,
+        val nonce = web3.eth.getTransactionCount(cd.address)
+        val transactionObject = Web3.TransactionObject(cd.address,
                 smartContract.address,
                 encodedFunction,
                 options,
                 nonce)
-        val response = web3.eth.sendTransaction(transactionObject, credentials)
+        val response = web3.eth.sendTransaction(transactionObject, cd)
         if (response.hasError()) {
             throw IOException("Error processing transaction request: " + response.error.message)
         }
@@ -110,7 +111,7 @@ class EtherSpace(private val web3: Web3jAdapter,
                 args,
                 returnType.listTupleActualTypes())
         val encodedFunction = web3.abi.encodeFunctionCall(contractFunction.args, contractFunction.name)
-        val transactionObject = Web3.TransactionObject(credentials!!.address,
+        val transactionObject = Web3.TransactionObject(null,
                 smartContract.address,
                 encodedFunction,
                 options)
@@ -150,7 +151,8 @@ class EtherSpace(private val web3: Web3jAdapter,
 
     data class Options(val value: BigInteger = BigInteger.ZERO,
                        val gas: BigInteger = Contract.GAS_LIMIT,
-                       val gasPrice: BigInteger = ManagedTransaction.GAS_PRICE)
+                       val gasPrice: BigInteger = ManagedTransaction.GAS_PRICE,
+                       val credentials: Credentials? = null)
 
     private data class ContractFunction(val name: String,
                                         val args: List<Any>,

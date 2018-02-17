@@ -78,31 +78,31 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
             return response.transactionCount
         }
 
-        override fun signTransaction(transactionObject: Web3.TransactionObject, credentials: Credentials): String {
+        override fun signTransaction(transactionObject: Web3.TransactionObject,
+                                     credentials: cc.etherspace.Credentials): String {
             val signedMessage = TransactionEncoder.signMessage(
                     transactionObject.toRawTransaction(),
-                    credentials)
+                    credentials.toWeb3jCredentials())
             return Numeric.toHexString(signedMessage)
         }
 
         override fun sendTransaction(transactionObject: Web3.TransactionObject,
-                                     credentials: Credentials): EthSendTransaction {
+                                     credentials: cc.etherspace.Credentials): EthSendTransaction {
             val signTransaction = signTransaction(transactionObject, credentials)
             return sendSignedTransaction(signTransaction)
         }
 
-        override fun sendSignedTransaction(signedTransactionData: String): EthSendTransaction {
-            return web3j.ethSendRawTransaction(signedTransactionData).send()
-        }
+        override fun sendSignedTransaction(signedTransactionData: String): EthSendTransaction =
+                web3j.ethSendRawTransaction(signedTransactionData).send()
 
-        fun Web3.TransactionObject.toRawTransaction(): RawTransaction {
-            return RawTransaction.createTransaction(nonce,
-                    gasPrice,
-                    gas,
-                    to,
-                    value,
-                    data)
-        }
+        private fun Web3.TransactionObject.toRawTransaction(): RawTransaction = RawTransaction.createTransaction(nonce,
+                gasPrice,
+                gas,
+                to,
+                value,
+                data)
+
+        private fun cc.etherspace.Credentials.toWeb3jCredentials(): Credentials = Credentials.create(privateKey)
     }
 
     data class TransactionReceiptImpl(override val blockHash: String,

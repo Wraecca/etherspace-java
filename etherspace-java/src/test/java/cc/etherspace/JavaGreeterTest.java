@@ -2,8 +2,7 @@ package cc.etherspace;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.ECKeyPair;
+import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 
@@ -14,9 +13,7 @@ public class JavaGreeterTest {
 
     @Before
     public void setUp() {
-        Credentials credentials = Credentials.create(
-                ECKeyPair.create(
-                        new BigInteger("77398679111088585283982189543320298238063257726010371587476264149399587362827")));
+        Credentials credentials = new Credentials(Numeric.toHexStringWithPrefix(new BigInteger("77398679111088585283982189543320298238063257726010371587476264149399587362827")));
         EtherSpace etherSpace = new EtherSpace.Builder()
                 .provider("https://rinkeby.infura.io/3teU4WimZ2pbdjPUDpPW")
                 .credentials(credentials)
