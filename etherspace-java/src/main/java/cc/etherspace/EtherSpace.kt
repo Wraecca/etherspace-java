@@ -86,7 +86,7 @@ class EtherSpace(private val web3: Web3jAdapter,
         val returnTypeToken = TypeToken.of(returnType)
         when {
             returnTypeToken.isSubtypeOf(String::class.java) -> return response.transactionHash
-            returnTypeToken.isSubtypeOf(Web3.TransactionReceipt::class.java) -> {
+            returnTypeToken.isSubtypeOf(TransactionReceipt::class.java) -> {
                 for (i in 1..GET_TRANSACTION_RECEIPT_POLLING_ATTEMPTS) {
                     val transactionReceipt = web3.eth.getTransactionReceipt(response.transactionHash)
                     if (transactionReceipt != null) {
@@ -151,7 +151,6 @@ class EtherSpace(private val web3: Web3jAdapter,
     data class Options(val value: BigInteger = BigInteger.ZERO,
                        val gas: BigInteger = Contract.GAS_LIMIT,
                        val gasPrice: BigInteger = ManagedTransaction.GAS_PRICE)
-
 
     private data class ContractFunction(val name: String,
                                         val args: List<Any>,

@@ -3,13 +3,16 @@ package cc.etherspace.web3j
 import cc.etherspace.*
 import com.google.common.reflect.TypeParameter
 import com.google.common.reflect.TypeToken
+import org.web3j.abi.EventEncoder
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.*
+import org.web3j.abi.datatypes.Event
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.*
 import unsigned.toBigInt
+import java.lang.reflect.Constructor
 import java.math.BigInteger
 import kotlin.reflect.KClass
 
@@ -27,6 +30,48 @@ class Web3jAbi : Web3.Abi {
                 parameters.map { toWeb3jValue(it) },
                 emptyList())
         return FunctionEncoder.encode(function)
+    }
+
+    override fun <T> encodeEventSignature(clazz: Class<T>): String {
+        val constructor = getEventConstructor(clazz)
+        return EventEncoder.encode(toWeb3jEvent(clazz.simpleName, constructor))
+    }
+
+    override fun <T> decodeLog(clazz: Class<T>, hexString: String, topics: List<String>): T? {
+        val constructor = getEventConstructor(clazz)
+        val event = toWeb3jEvent(clazz.simpleName, constructor)
+
+        val nonIndexedValues = FunctionReturnDecoder.decode(hexString, event.nonIndexedParameters)
+        val indexedValues = event.indexedParameters.mapIndexed { index, typeReference ->
+            FunctionReturnDecoder.decodeIndexedValue(topics[index], typeReference)
+        }
+
+        var nonIndexedValuesIdx = 0
+        var indexValuesIdx = 0
+        val args = constructor.parameters.map {
+            if (it.getAnnotation(Indexed::class.java) != null) {
+                indexedValues[indexValuesIdx++]
+            } else {
+                nonIndexedValues[nonIndexedValuesIdx++]
+            }
+        }.map { toSolValue(it) }
+        return constructor.newInstance(*args.toTypedArray())
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> getEventConstructor(clazz: Class<T>): Constructor<T> {
+        return (clazz.constructors.firstOrNull { it.getAnnotation(EventConstructor::class.java) != null }
+                ?: throw IllegalArgumentException("Need at least one constructor annotated with @EventConstructor")) as Constructor<T>
+    }
+
+    private fun <T> toWeb3jEvent(eventName: String, constructor: Constructor<T>): Event {
+        val indexedParams = constructor.parameters.filter { it.getAnnotation(Indexed::class.java) != null }
+        val dataParams = constructor.parameters.filter { !indexedParams.contains(it) }
+        return Event(eventName,
+                indexedParams.map {
+                    toWeb3jType(it.getAnnotation(Indexed::class.java).argumentType.java)
+                },
+                dataParams.map { toWeb3jType(it.type) })
     }
 
     private fun toWeb3jValue(value: Any): Type<out Any> {

@@ -18,6 +18,10 @@ interface Web3 {
         fun encodeFunctionCall(parameters: List<Any>, functionName: String): String
 
         fun decodeParameters(types: List<Type>, hexString: String): List<Any>
+
+        fun <T> decodeLog(clazz: Class<T>, hexString: String, topics: List<String>): T?
+
+        fun <T> encodeEventSignature(clazz: Class<T>): String
     }
 
     interface Eth {
@@ -57,23 +61,4 @@ interface Web3 {
                 nonce)
     }
 
-    data class Log(val address: String,
-                   val data: String,
-                   val topics: List<String>,
-                   val logIndex: BigInteger,
-                   val transactionIndex: BigInteger,
-                   val transactionHash: String,
-                   val blockHash: String,
-                   val blockNumber: BigInteger)
-
-    data class TransactionReceipt(val blockHash: String,
-                                  val blockNumber: BigInteger,
-                                  val transactionHash: String,
-                                  val transactionIndex: BigInteger,
-                                  val from: String,
-                                  val to: String,
-                                  val contractAddress: String?,
-                                  val cumulativeGasUsed: BigInteger,
-                                  val gasUsed: BigInteger,
-                                  val logs: List<Log>)
 }

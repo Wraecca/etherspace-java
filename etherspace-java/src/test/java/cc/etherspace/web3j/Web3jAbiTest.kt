@@ -4,6 +4,7 @@ import cc.etherspace.*
 import com.google.common.reflect.TypeToken
 import org.amshove.kluent.`should equal to`
 import org.amshove.kluent.`should equal`
+import org.amshove.kluent.`should not be null`
 import org.junit.Before
 import org.junit.Test
 import java.math.BigInteger
@@ -241,4 +242,29 @@ class Web3jAbiTest {
                 "000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000ea000000000000000000000000000000000000000000000000000000000000000848656c6c6f212521000000000000000000000000000000000000000000000000")
         list.`should equal`(listOf("Hello!%!", UBigInteger(234)))
     }
+
+    @Test
+    fun encodeEventSignature() {
+        val signature = web3jAbi.encodeEventSignature(myEvent::class.java)
+        signature.`should equal to`("0xf2eeb729e636a8cb783be044acf6b7b1e2c5863735b60d6daae84c366ee87d97")
+    }
+
+    data class myEvent @EventConstructor constructor(val myNumber: UBigInteger,
+                                                     val myBytes: SolBytes32)
+
+    @Test
+    fun decodeLog() {
+        val event = web3jAbi.decodeLog(DecodeLog::class.java,
+                "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000748656c6c6f252100000000000000000000000000000000000000000000000000",
+                listOf("0x000000000000000000000000000000000000000000000000000000000000f310",
+                        "0x0000000000000000000000000000000000000000000000000000000000000010"))
+        event.`should not be null`()
+        event!!.myString.`should equal to`("Hello%!")
+        event.myNumber.`should equal`(UBigInteger(62224))
+        event.mySmallNumber.`should equal`(SolUint8(16))
+    }
+
+    data class DecodeLog @EventConstructor constructor(val myString: String,
+                                                       @Indexed(argumentType = UBigInteger::class) val myNumber: UBigInteger,
+                                                       @Indexed(argumentType = SolUint8::class) val mySmallNumber: SolUint8)
 }

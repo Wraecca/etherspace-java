@@ -7,6 +7,7 @@ import org.junit.Before
 import org.junit.Test
 import org.web3j.crypto.Credentials
 import org.web3j.crypto.ECKeyPair
+import org.web3j.utils.Numeric
 import java.io.IOException
 import java.math.BigInteger
 
@@ -31,6 +32,14 @@ class GreaterTest {
         receipt.from.`should equal to`("0x39759a3c0ada2d61b6ca8eb6afc8243075307ed3")
         receipt.to.`should equal to`("0xa871c507184ecfaf947253e187826c1907e8dc7d")
         receipt.logs.size.`should be greater than`(0)
+
+        val events = receipt.listEvents(Greeter.Modified::class.java)
+        events.size.`should equal to`(1)
+        events[0].event.`should equal to`("Modified")
+        events[0].returnValue.oldGreeting.`should equal to`("Hello World")
+        events[0].returnValue.newGreeting.`should equal to`("Hello World")
+        events[0].returnValue.oldGreetingIdx.`should equal`(SolBytes32(Numeric.hexStringToByteArray("0x592fa743889fc7f92ac2a37bb1f5ba1daf2a5c84741ca0e0061d243a2e6707ba")))
+        events[0].returnValue.newGreetingIdx.`should equal`(SolBytes32(Numeric.hexStringToByteArray("0x592fa743889fc7f92ac2a37bb1f5ba1daf2a5c84741ca0e0061d243a2e6707ba")))
     }
 
     @Test(expected = IOException::class)

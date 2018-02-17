@@ -4,7 +4,7 @@ import java.math.BigInteger
 
 interface Greeter {
     @Send
-    fun newGreeting(greeting: String): Web3.TransactionReceipt
+    fun newGreeting(greeting: String): TransactionReceipt
 
     @Send
     fun newGreeting(greeting: String, options: EtherSpace.Options): String
@@ -12,6 +12,7 @@ interface Greeter {
     @Call
     fun greet(): String
 
+    @Send
     fun newPersonalGreeting(from: String, greeting: String): String
 
     @Call
@@ -49,4 +50,9 @@ interface Greeter {
 
     @Call
     fun bytesType(byte: ByteArray): ByteArray
+
+    data class Modified @EventConstructor constructor(@Indexed(argumentType = String::class) val oldGreetingIdx: SolBytes32,
+                                                      @Indexed(argumentType = String::class) val newGreetingIdx: SolBytes32,
+                                                      val oldGreeting: String,
+                                                      val newGreeting: String)
 }

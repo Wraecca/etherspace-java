@@ -1,5 +1,6 @@
 package cc.etherspace.web3j
 
+import cc.etherspace.Event
 import cc.etherspace.Web3
 import okhttp3.OkHttpClient
 import org.web3j.crypto.Credentials
@@ -27,7 +28,7 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
     override val eth: Web3jEth = Web3jEth()
 
     inner class Web3jEth : Web3.Eth {
-        override fun getTransactionReceipt(transactionHash: String): Web3.TransactionReceipt? {
+        override fun getTransactionReceipt(transactionHash: String): cc.etherspace.TransactionReceipt? {
             val response = web3j.ethGetTransactionReceipt(transactionHash).send()
             if (response.hasError()) {
                 throw IOException("Error processing request: " + response.error.message)
@@ -35,8 +36,8 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
             return response.transactionReceipt.map { it.toWeb3TransactionReceipt() }.orElse(null)
         }
 
-        private fun TransactionReceipt.toWeb3TransactionReceipt(): Web3.TransactionReceipt {
-            return Web3.TransactionReceipt(blockHash,
+        private fun TransactionReceipt.toWeb3TransactionReceipt(): cc.etherspace.TransactionReceipt {
+            return TransactionReceiptImpl(blockHash,
                     blockNumber,
                     transactionHash,
                     transactionIndex,
@@ -45,11 +46,12 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
                     contractAddress,
                     cumulativeGasUsed,
                     gasUsed,
-                    logs.map { it.toWeb3Log() })
+                    logs.map { it.toWeb3Log() },
+                    abi)
         }
 
-        private fun Log.toWeb3Log(): Web3.Log {
-            return Web3.Log(address,
+        private fun Log.toWeb3Log(): cc.etherspace.Log {
+            return cc.etherspace.Log(address,
                     data,
                     topics,
                     logIndex,
@@ -92,14 +94,39 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
         override fun sendSignedTransaction(signedTransactionData: String): EthSendTransaction {
             return web3j.ethSendRawTransaction(signedTransactionData).send()
         }
-    }
-}
 
-fun Web3.TransactionObject.toRawTransaction(): RawTransaction {
-    return RawTransaction.createTransaction(nonce,
-            gasPrice,
-            gas,
-            to,
-            value,
-            data)
+        fun Web3.TransactionObject.toRawTransaction(): RawTransaction {
+            return RawTransaction.createTransaction(nonce,
+                    gasPrice,
+                    gas,
+                    to,
+                    value,
+                    data)
+        }
+    }
+
+    data class TransactionReceiptImpl(override val blockHash: String,
+                                      override val blockNumber: BigInteger,
+                                      override val transactionHash: String,
+                                      override val transactionIndex: BigInteger,
+                                      override val from: String,
+                                      override val to: String,
+                                      override val contractAddress: String?,
+                                      override val cumulativeGasUsed: BigInteger,
+                                      override val gasUsed: BigInteger,
+                                      override val logs: List<cc.etherspace.Log>,
+                                      private val abi: Web3.Abi) : cc.etherspace.TransactionReceipt {
+        override fun <T> listEvents(clazz: Class<T>): List<Event<T>> {
+            val signature = abi.encodeEventSignature(clazz)
+            return logs.mapNotNull { log ->
+                if (log.topics[0] != signature) return@mapNotNull null
+                abi.decodeLog(clazz, log.data, log.topics.subList(1, log.topics.size))?.let { value ->
+                    Event(clazz.simpleName,
+                            signature,
+                            value,
+                            log)
+                }
+            }
+        }
+    }
 }
