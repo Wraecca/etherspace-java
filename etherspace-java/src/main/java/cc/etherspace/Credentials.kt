@@ -1,6 +1,6 @@
 package cc.etherspace
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.common.io.Files
 import org.web3j.crypto.Keys
 import org.web3j.crypto.Sign
@@ -27,8 +27,8 @@ class Credentials {
         this.privateKey = Numeric.toHexStringWithPrefix(ecKeyPair.privateKey)
     }
 
-    constructor(password: String, file: File) :
-            this(password, Files.asCharSource(file, Charset.forName("UTF-8")).read())
+    constructor(password: String, file: File) : this(password,
+            Files.asCharSource(file, Charset.forName("UTF-8")).read())
 
     private fun toAddress(privateKey: String): String =
             toAddress(Sign.publicKeyFromPrivate(Numeric.toBigInt(privateKey)))
@@ -51,6 +51,6 @@ class Credentials {
     }
 
     companion object {
-        private val objectMapper = ObjectMapper()
+        private val objectMapper = jacksonObjectMapper()
     }
 }

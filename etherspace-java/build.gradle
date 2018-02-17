@@ -11,6 +11,10 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.guava/guava
     compile group: 'com.google.guava', name: 'guava', version: '23.6-jre'
 
+    // jackson
+    compile "com.fasterxml.jackson.core:jackson-databind:2.9.2"
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.2"
+
     // kluent
     testCompile 'org.amshove.kluent:kluent:1.30'
 
