@@ -95,8 +95,8 @@ class GreaterTest {
 
     @Test
     fun uintType() {
-        val i = greeter.uintType(UBigInteger(10L))
-        i.`should equal`(UBigInteger(10L))
+        val i = greeter.uintType(SolUint256(10))
+        i.`should equal`(SolUint256(10))
     }
 
     @Test
@@ -114,7 +114,7 @@ class GreaterTest {
 
     @Test
     fun uintsType() {
-        val uints = listOf(UBigInteger(10L), UBigInteger(11L), UBigInteger(11L))
+        val uints = listOf(SolUint256(10), SolUint256(11), SolUint256(11))
         val i = greeter.uintsType(uints)
         i.`should equal`(uints)
     }

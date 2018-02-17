@@ -28,7 +28,7 @@ interface Greeter {
     fun intType(int: BigInteger): BigInteger
 
     @Call
-    fun uintType(int: UBigInteger): UBigInteger
+    fun uintType(int: SolUint256): SolUint256
 
     @Call
     fun int24Type(solInt: SolInt24): SolInt24
@@ -37,7 +37,7 @@ interface Greeter {
     fun addressType(solAddress: SolAddress): SolAddress
 
     @Call
-    fun uintsType(uints: List<UBigInteger>): List<UBigInteger>
+    fun uintsType(uints: List<SolUint256>): List<SolUint256>
 
     @Call
     fun byteType(byte: Byte): Byte

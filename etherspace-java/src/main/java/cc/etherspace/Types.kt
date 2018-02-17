@@ -5,11 +5,6 @@ package cc.etherspace
 import java.math.BigInteger
 import java.util.*
 
-data class UBigInteger(var value: BigInteger) {
-    constructor(long: Long) : this(long.toBigInteger())
-    constructor(i: Int) : this(i.toBigInteger())
-}
-
 interface SolType
 
 sealed class SolNumber(val value: BigInteger, val bits: Int, val unsigned: Boolean) : SolType {
@@ -36,228 +31,289 @@ sealed class SolInt(value: BigInteger, bits: Int) : SolNumber(value, bits, false
 
 class SolInt8(value: BigInteger) : SolInt(value, 8) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt24(value: BigInteger) : SolInt(value, 24) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt40(value: BigInteger) : SolInt(value, 40) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt48(value: BigInteger) : SolInt(value, 48) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt56(value: BigInteger) : SolInt(value, 56) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt72(value: BigInteger) : SolInt(value, 72) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt80(value: BigInteger) : SolInt(value, 80) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt88(value: BigInteger) : SolInt(value, 88) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt96(value: BigInteger) : SolInt(value, 96) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt104(value: BigInteger) : SolInt(value, 104) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt112(value: BigInteger) : SolInt(value, 112) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt120(value: BigInteger) : SolInt(value, 120) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt128(value: BigInteger) : SolInt(value, 128) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt136(value: BigInteger) : SolInt(value, 136) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt144(value: BigInteger) : SolInt(value, 144) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt152(value: BigInteger) : SolInt(value, 152) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt160(value: BigInteger) : SolInt(value, 160) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt168(value: BigInteger) : SolInt(value, 168) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt176(value: BigInteger) : SolInt(value, 176) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt184(value: BigInteger) : SolInt(value, 184) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt192(value: BigInteger) : SolInt(value, 192) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt200(value: BigInteger) : SolInt(value, 200) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt208(value: BigInteger) : SolInt(value, 208) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt216(value: BigInteger) : SolInt(value, 216) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt224(value: BigInteger) : SolInt(value, 224) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt232(value: BigInteger) : SolInt(value, 232) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt240(value: BigInteger) : SolInt(value, 240) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolInt248(value: BigInteger) : SolInt(value, 248) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 sealed class SolUint(value: BigInteger, bits: Int) : SolNumber(value, bits, true)
 
 class SolUint8(value: BigInteger) : SolUint(value, 8) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint24(value: BigInteger) : SolUint(value, 24) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint40(value: BigInteger) : SolUint(value, 40) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint48(value: BigInteger) : SolUint(value, 48) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint56(value: BigInteger) : SolUint(value, 56) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint72(value: BigInteger) : SolUint(value, 72) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint80(value: BigInteger) : SolUint(value, 80) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint88(value: BigInteger) : SolUint(value, 88) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint96(value: BigInteger) : SolUint(value, 96) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint104(value: BigInteger) : SolUint(value, 104) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint112(value: BigInteger) : SolUint(value, 112) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint120(value: BigInteger) : SolUint(value, 120) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint128(value: BigInteger) : SolUint(value, 128) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint136(value: BigInteger) : SolUint(value, 136) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint144(value: BigInteger) : SolUint(value, 144) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint152(value: BigInteger) : SolUint(value, 152) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint160(value: BigInteger) : SolUint(value, 160) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint168(value: BigInteger) : SolUint(value, 168) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint176(value: BigInteger) : SolUint(value, 176) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint184(value: BigInteger) : SolUint(value, 184) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint192(value: BigInteger) : SolUint(value, 192) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint200(value: BigInteger) : SolUint(value, 200) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint208(value: BigInteger) : SolUint(value, 208) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint216(value: BigInteger) : SolUint(value, 216) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint224(value: BigInteger) : SolUint(value, 224) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint232(value: BigInteger) : SolUint(value, 232) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint240(value: BigInteger) : SolUint(value, 240) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 class SolUint248(value: BigInteger) : SolUint(value, 248) {
     constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
+}
+
+class SolUint256(value: BigInteger) : SolUint(value, 256) {
+    constructor(i: Int) : this(i.toBigInteger())
+    constructor(l: Long) : this(l.toBigInteger())
 }
 
 data class SolAddress(val address: String) : SolType

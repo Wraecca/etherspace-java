@@ -79,7 +79,6 @@ class Web3jAbi : Web3.Abi {
             is String -> Utf8String(value)
             is Boolean -> Bool(value)
             is BigInteger -> Int256(value)
-            is UBigInteger -> Uint256(value.value)
             is Short -> Int16(value.toBigInt())
             is Int -> Int32(value.toBigInteger())
             is Long -> Int64(value.toBigInteger())
@@ -103,7 +102,6 @@ class Web3jAbi : Web3.Abi {
             typeToken.childOf(String::class) -> Utf8String::class.java
             typeToken.childOf(Boolean::class) -> Bool::class.java
             typeToken.childOf(BigInteger::class) -> Int256::class.java
-            typeToken.childOf(UBigInteger::class) -> Uint256::class.java
             typeToken.childOf(SolNumber::class) -> typeToken.toWeb3jType()
             typeToken.childOf(SolAddress::class) -> Address::class.java
             typeToken.childOf(Byte::class) -> Bytes1::class.java
@@ -167,7 +165,6 @@ class Web3jAbi : Web3.Abi {
             is Int64 -> value.value.toLong()
             is Int32 -> value.value.toInt()
             is Int16 -> value.value.toShort()
-            is Uint256 -> UBigInteger(value.value)
             is Uint64 -> value.value.toLong()
             is Uint32 -> value.value.toInt()
             is Uint16 -> value.value.toShort()

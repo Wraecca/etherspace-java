@@ -76,29 +76,29 @@ class Web3jAbiTest {
 
     @Test
     fun encodeFunctionCall_uintType() {
-        val enc = web3jAbi.encodeFunctionCall(listOf(UBigInteger(10)), "uintType")
+        val enc = web3jAbi.encodeFunctionCall(listOf(SolUint256(10)), "uintType")
         enc.`should equal to`("0xf8c5f14f000000000000000000000000000000000000000000000000000000000000000a")
     }
 
     @Test
     fun decodeParameters_uint() {
-        val list = web3jAbi.decodeParameters(listOf(UBigInteger::class.java),
+        val list = web3jAbi.decodeParameters(listOf(SolUint256::class.java),
                 "000000000000000000000000000000000000000000000000000000000000000a")
-        list.`should equal`(listOf(UBigInteger(10)))
+        list.`should equal`(listOf(SolUint256(10)))
     }
 
     @Test
     fun encodeFunctionCall_largeInt() {
-        val enc = web3jAbi.encodeFunctionCall(listOf(UBigInteger(BigInteger("76508586243155862545955748917616667912411098067151927646783046335856770806840"))),
+        val enc = web3jAbi.encodeFunctionCall(listOf(SolUint256(BigInteger("76508586243155862545955748917616667912411098067151927646783046335856770806840"))),
                 "uintType")
         enc.`should equal to`("0xf8c5f14fa9265342bc3152636f86592c0f1ebf41106f6d6a79e131310a3a543db4cbf438")
     }
 
     @Test
     fun decodeParameters_largeInt() {
-        val list = web3jAbi.decodeParameters(listOf(UBigInteger::class.java),
+        val list = web3jAbi.decodeParameters(listOf(SolUint256::class.java),
                 "a9265342bc3152636f86592c0f1ebf41106f6d6a79e131310a3a543db4cbf438")
-        list.`should equal`(listOf(UBigInteger(BigInteger("76508586243155862545955748917616667912411098067151927646783046335856770806840"))))
+        list.`should equal`(listOf(SolUint256(BigInteger("76508586243155862545955748917616667912411098067151927646783046335856770806840"))))
     }
 
     @Test
@@ -143,20 +143,20 @@ class Web3jAbiTest {
 
     @Test
     fun encodeFunctionCall_uintsType() {
-        val enc = web3jAbi.encodeFunctionCall(listOf(arrayOf(UBigInteger(1),
-                UBigInteger(2),
-                UBigInteger(3),
-                UBigInteger(4))),
+        val enc = web3jAbi.encodeFunctionCall(listOf(arrayOf(SolUint256(1),
+                SolUint256(2),
+                SolUint256(3),
+                SolUint256(4))),
                 "uintsType")
         enc.`should equal to`("0xf430746a0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000004")
     }
 
     @Test
     fun decodeParameters_uints() {
-        val token = object : TypeToken<SolArray4<UBigInteger>>() {}
+        val token = object : TypeToken<SolArray4<SolUint256>>() {}
         val list = web3jAbi.decodeParameters(listOf(token.type),
                 "0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000004")
-        list.`should equal`(listOf(SolArray4(arrayOf(UBigInteger(1), UBigInteger(2), UBigInteger(3), UBigInteger(4)))))
+        list.`should equal`(listOf(SolArray4(arrayOf(SolUint256(1), SolUint256(2), SolUint256(3), SolUint256(4)))))
     }
 
     @Test
@@ -231,16 +231,16 @@ class Web3jAbiTest {
 
     @Test
     fun encodeFunctionCall_myMethod() {
-        val enc = web3jAbi.encodeFunctionCall(listOf(UBigInteger(2345675643), "Hello!%"),
+        val enc = web3jAbi.encodeFunctionCall(listOf(SolUint256(2345675643), "Hello!%"),
                 "myMethod")
         enc.`should equal to`("0x24ee0097000000000000000000000000000000000000000000000000000000008bd02b7b0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000748656c6c6f212500000000000000000000000000000000000000000000000000")
     }
 
     @Test
     fun decodeParameters_myMethod() {
-        val list = web3jAbi.decodeParameters(listOf(String::class.java, UBigInteger::class.java),
+        val list = web3jAbi.decodeParameters(listOf(String::class.java, SolUint256::class.java),
                 "000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000ea000000000000000000000000000000000000000000000000000000000000000848656c6c6f212521000000000000000000000000000000000000000000000000")
-        list.`should equal`(listOf("Hello!%!", UBigInteger(234)))
+        list.`should equal`(listOf("Hello!%!", SolUint256(234)))
     }
 
     @Test
@@ -249,7 +249,7 @@ class Web3jAbiTest {
         signature.`should equal to`("0xf2eeb729e636a8cb783be044acf6b7b1e2c5863735b60d6daae84c366ee87d97")
     }
 
-    data class myEvent @EventConstructor constructor(val myNumber: UBigInteger,
+    data class myEvent @EventConstructor constructor(val myNumber: SolUint256,
                                                      val myBytes: SolBytes32)
 
     @Test
@@ -260,11 +260,11 @@ class Web3jAbiTest {
                         "0x0000000000000000000000000000000000000000000000000000000000000010"))
         event.`should not be null`()
         event!!.myString.`should equal to`("Hello%!")
-        event.myNumber.`should equal`(UBigInteger(62224))
+        event.myNumber.`should equal`(SolUint256(62224))
         event.mySmallNumber.`should equal`(SolUint8(16))
     }
 
     data class DecodeLog @EventConstructor constructor(val myString: String,
-                                                       @Indexed(argumentType = UBigInteger::class) val myNumber: UBigInteger,
+                                                       @Indexed(argumentType = SolUint256::class) val myNumber: SolUint256,
                                                        @Indexed(argumentType = SolUint8::class) val mySmallNumber: SolUint8)
 }
