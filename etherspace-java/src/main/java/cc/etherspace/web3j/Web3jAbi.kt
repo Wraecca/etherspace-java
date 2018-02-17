@@ -110,7 +110,7 @@ class Web3jAbi : Web3.Abi {
             typeToken.childOf(ByteArray::class) -> DynamicBytes::class.java
             typeToken.childOf(List::class) -> toWeb3jArrayType(typeToken)
             typeToken.childOf(SolFixedArray::class) -> return toWeb3jStaticArrayTypeReference(typeToken)
-            else -> throw IllegalArgumentException()
+            else -> throw IllegalArgumentException("Unsupported data type:${type.typeName}")
         }
         return createTypeReference(web3jType)
     }

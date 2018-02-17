@@ -18,7 +18,7 @@ class GreaterTest {
             provider = "https://rinkeby.infura.io/3teU4WimZ2pbdjPUDpPW"
             credentials = Credentials("0xab1e199623aa5bb2c381c349b1734e31b5be08de0486ffab68e3af4853d9980b")
         }
-        greeter = etherSpace.create(SolAddress("0xa871c507184ecfaf947253e187826c1907e8dc7d"), Greeter::class.java)
+        greeter = etherSpace.create("0xa871c507184ecfaf947253e187826c1907e8dc7d", Greeter::class.java)
     }
 
     @Test
