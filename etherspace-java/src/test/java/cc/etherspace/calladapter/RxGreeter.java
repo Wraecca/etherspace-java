@@ -10,8 +10,14 @@ public interface RxGreeter {
     @Send
     Observable<TransactionReceipt> newGreeting(String greeting);
 
+    @Send
+    Observable<TransactionReceipt> newGreeting(String greeting, Options options);
+
     @Call
     Observable<String> greet();
+
+    @Call
+    Observable<String> greet_wrongFunctionName();
 
     @SuppressWarnings("unused")
     class Modified {

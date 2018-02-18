@@ -1,5 +1,7 @@
 package cc.etherspace
 
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.amshove.kluent.`should be greater than`
 import org.amshove.kluent.`should equal to`
 import org.amshove.kluent.`should equal`
@@ -14,8 +16,15 @@ class GreaterTest {
 
     @Before
     fun setUp() {
+        val interceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger { message -> println(message) })
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
+        val okHttpClient = OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .build()
+
         val etherSpace = EtherSpace.build {
-            provider = "https://rinkeby.infura.io/3teU4WimZ2pbdjPUDpPW"
+            client = okHttpClient
+            provider = "https://rinkeby.infura.io/"
             credentials = Credentials("0xab1e199623aa5bb2c381c349b1734e31b5be08de0486ffab68e3af4853d9980b")
         }
         greeter = etherSpace.create("0xa871c507184ecfaf947253e187826c1907e8dc7d", Greeter::class.java)
@@ -24,6 +33,24 @@ class GreaterTest {
     @Test
     fun newGreeting() {
         val receipt = greeter.newGreeting("Hello World")
+        receipt.blockHash.length.`should equal to`(66)
+        receipt.transactionHash.length.`should equal to`(66)
+        receipt.from.`should equal to`("0x39759a3c0ada2d61b6ca8eb6afc8243075307ed3")
+        receipt.to.`should equal to`("0xa871c507184ecfaf947253e187826c1907e8dc7d")
+        receipt.logs.size.`should be greater than`(0)
+
+        val events = receipt.listEvents(Greeter.Modified::class.java)
+        events.size.`should equal to`(1)
+        events[0].event.`should equal to`("Modified")
+        events[0].returnValue.oldGreeting.`should equal to`("Hello World")
+        events[0].returnValue.newGreeting.`should equal to`("Hello World")
+        events[0].returnValue.oldGreetingIdx.`should equal`(SolBytes32(Numeric.hexStringToByteArray("0x592fa743889fc7f92ac2a37bb1f5ba1daf2a5c84741ca0e0061d243a2e6707ba")))
+        events[0].returnValue.newGreetingIdx.`should equal`(SolBytes32(Numeric.hexStringToByteArray("0x592fa743889fc7f92ac2a37bb1f5ba1daf2a5c84741ca0e0061d243a2e6707ba")))
+    }
+
+    @Test
+    fun newGreeting_functionName() {
+        val receipt = greeter.newGreeting_functionName("Hello World")
         receipt.blockHash.length.`should equal to`(66)
         receipt.transactionHash.length.`should equal to`(66)
         receipt.from.`should equal to`("0x39759a3c0ada2d61b6ca8eb6afc8243075307ed3")
@@ -49,6 +76,18 @@ class GreaterTest {
     @Test
     fun greet() {
         val greet = greeter.greet()
+        greet.`should equal to`("Hello World")
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun greet_wrongFunctionName() {
+        val greet = greeter.greet_wrongFunctionName()
+        greet.`should equal to`("Hello World")
+    }
+
+    @Test
+    fun greet_functionName() {
+        val greet = greeter.greet_functionName()
         greet.`should equal to`("Hello World")
     }
 

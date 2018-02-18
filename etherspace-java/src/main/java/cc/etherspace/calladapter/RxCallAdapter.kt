@@ -5,13 +5,18 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 class RxCallAdapter<T> : CallAdapter<T, Observable<T>> {
-    override fun adapt(block: () -> T): Observable<T> {
+    override fun adapt(block: () -> T?): Observable<T> {
         return Observable.create {
             try {
-                it.onNext(block())
-                it.onCompleted()
+                val ret = block()
+                if (!it.isUnsubscribed) {
+                    it.onNext(ret)
+                    it.onCompleted()
+                }
             } catch (e: Exception) {
-                it.onError(e)
+                if (!it.isUnsubscribed) {
+                    it.onError(e)
+                }
             }
         }
     }

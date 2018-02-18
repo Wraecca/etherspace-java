@@ -1,13 +1,20 @@
 package cc.etherspace;
 
+import java.io.IOException;
 import java.util.Objects;
 
 public interface JavaGreeter {
     @Send
     TransactionReceipt newGreeting(String greeting);
 
+    @Send
+    TransactionReceipt newGreeting(String greeting, Options options) throws IOException;
+
     @Call
     String greet();
+
+    @Call
+    String greet_wrongFunctionName();
 
     @SuppressWarnings("unused")
     class Modified {

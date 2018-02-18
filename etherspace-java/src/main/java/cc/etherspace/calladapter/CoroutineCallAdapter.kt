@@ -5,7 +5,7 @@ import kotlinx.coroutines.experimental.async
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
-class CoroutineCallAdapter<T> : CallAdapter<T, Deferred<T>> {
+class CoroutineCallAdapter<T> : CallAdapter<T, Deferred<T?>> {
     override fun toActualReturnType(type: Type): Type = (type as ParameterizedType).actualTypeArguments[0]
 
     override fun adaptable(returnType: Type, annotations: Array<Annotation>): Boolean {
@@ -18,7 +18,7 @@ class CoroutineCallAdapter<T> : CallAdapter<T, Deferred<T>> {
         return true
     }
 
-    override fun adapt(block: () -> T): Deferred<T> {
+    override fun adapt(block: () -> T?): Deferred<T?> {
         return async { block() }
     }
 }

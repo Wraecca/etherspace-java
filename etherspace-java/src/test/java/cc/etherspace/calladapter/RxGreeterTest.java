@@ -6,6 +6,8 @@ import org.junit.Test;
 import org.web3j.utils.Numeric;
 import rx.observers.TestSubscriber;
 
+import java.io.IOException;
+import java.math.BigInteger;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +38,17 @@ public class RxGreeterTest {
     }
 
     @Test
+    public void greet_wrongFunctionName() {
+        TestSubscriber<String> subscriber = new TestSubscriber<>();
+        greeter.greet_wrongFunctionName().subscribe(subscriber);
+
+        subscriber.assertCompleted();
+        subscriber.assertNoErrors();
+        subscriber.assertValueCount(1);
+        assertThat(subscriber.getOnNextEvents().get(0)).isNull();
+    }
+
+    @Test
     public void newGreeting() {
         TestSubscriber<TransactionReceipt> subscriber = new TestSubscriber<>();
         greeter.newGreeting("Hello World").subscribe(subscriber);
@@ -58,5 +71,12 @@ public class RxGreeterTest {
         assertThat(event.getReturnValue().getNewGreeting()).isEqualTo("Hello World");
         assertThat(event.getReturnValue().getOldGreetingIdx()).isEqualTo(new SolBytes32(Numeric.hexStringToByteArray("0x592fa743889fc7f92ac2a37bb1f5ba1daf2a5c84741ca0e0061d243a2e6707ba")));
         assertThat(event.getReturnValue().getNewGreetingIdx()).isEqualTo(new SolBytes32(Numeric.hexStringToByteArray("0x592fa743889fc7f92ac2a37bb1f5ba1daf2a5c84741ca0e0061d243a2e6707ba")));
+    }
+
+    @Test
+    public void newGreeting_options() {
+        TestSubscriber<TransactionReceipt> subscriber = new TestSubscriber<>();
+        greeter.newGreeting("Hello World", new Options(BigInteger.ZERO, BigInteger.valueOf(44_000_000_000L))).subscribe(subscriber);
+        subscriber.assertError(IOException.class);
     }
 }

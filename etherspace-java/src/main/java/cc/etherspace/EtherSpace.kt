@@ -14,7 +14,7 @@ import java.lang.reflect.Type
 
 class EtherSpace(private val web3: Web3jAdapter,
                  private val credentials: Credentials?,
-                 private val callAdapters: List<CallAdapter<Any, Any>>) {
+                 private val callAdapters: List<CallAdapter<Any, Any?>>) {
     @Suppress("UNCHECKED_CAST")
     fun <T> create(toAddress: String, service: Class<T>): T {
         val defaultOptions = createOptionsFromAnnotation(service)
@@ -27,7 +27,7 @@ class EtherSpace(private val web3: Web3jAdapter,
     private fun invokeFunction(toAddress: String,
                                method: Method,
                                args: List<Any>,
-                               defaultOptions: Options): Any {
+                               defaultOptions: Options): Any? {
         val options = (args.firstOrNull { it is Options } ?: createOptionsFromAnnotation(method,
                 defaultOptions)) as Options
         val params = args.filter { it !is Options }
@@ -54,7 +54,7 @@ class EtherSpace(private val web3: Web3jAdapter,
                         options
                 )
             }
-            
+
             throw IllegalArgumentException("There is no Send/Call annotation on this method")
         }
     }
@@ -106,7 +106,7 @@ class EtherSpace(private val web3: Web3jAdapter,
                                    functionName: String,
                                    args: List<Any>,
                                    returnType: Type,
-                                   options: Options): Any {
+                                   options: Options): Any? {
         val contractFunction = ContractFunction(functionName,
                 args,
                 returnType.listTupleActualTypes())
@@ -126,7 +126,7 @@ class EtherSpace(private val web3: Web3jAdapter,
 
         var credentials: Credentials? = null
 
-        var callAdapters: List<CallAdapter<Any, Any>> = mutableListOf()
+        var callAdapters: List<CallAdapter<Any, Any?>> = mutableListOf()
 
         var client: OkHttpClient? = null
 

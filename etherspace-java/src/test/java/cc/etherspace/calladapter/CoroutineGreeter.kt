@@ -2,17 +2,30 @@ package cc.etherspace.calladapter
 
 import cc.etherspace.*
 import kotlinx.coroutines.experimental.Deferred
+import java.io.IOException
 
 interface CoroutineGreeter {
+    @Throws(IOException::class)
     @Send
     fun newGreeting(greeting: String): Deferred<TransactionReceipt>
 
+    @Throws(IOException::class)
+    @Send
+    fun newGreeting(greeting: String, options: Options): Deferred<TransactionReceipt>
+
+    @Throws(IOException::class)
     @Call
     fun greet(): Deferred<String>
 
+    @Throws(IOException::class)
+    @Call
+    fun greet_wrongFunctionName(): Deferred<String>
+
+    @Throws(IOException::class)
     @Send
     fun newPersonalGreeting(from: String, greeting: String): Deferred<String>
 
+    @Throws(IOException::class)
     @Call
     fun personalGreet(): Deferred<Pair<String, String>>
 

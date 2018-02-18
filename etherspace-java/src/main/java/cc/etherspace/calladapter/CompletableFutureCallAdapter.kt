@@ -5,7 +5,7 @@ import java.lang.reflect.Type
 import java.util.concurrent.CompletableFuture
 
 class CompletableFutureCallAdapter<T> : CallAdapter<T, CompletableFuture<T>> {
-    override fun adapt(block: () -> T): CompletableFuture<T> {
+    override fun adapt(block: () -> T?): CompletableFuture<T> {
         return CompletableFuture.supplyAsync {
             block()
         }

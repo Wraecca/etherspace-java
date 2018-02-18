@@ -2,15 +2,22 @@ package cc.etherspace.calladapter;
 
 import cc.etherspace.*;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public interface CompletableFutureGreeter {
     @Send
-    CompletableFuture<TransactionReceipt> newGreeting(String greeting);
+    CompletableFuture<TransactionReceipt> newGreeting(String greeting) throws IOException;
+
+    @Send
+    CompletableFuture<TransactionReceipt> newGreeting(String greeting, Options options) throws IOException;
 
     @Call
-    CompletableFuture<String> greet();
+    CompletableFuture<String> greet() throws IOException;
+
+    @Call
+    CompletableFuture<String> greet_wrongFunctionName() throws IOException;
 
     @SuppressWarnings("unused")
     class Modified {

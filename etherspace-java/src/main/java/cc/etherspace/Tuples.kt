@@ -83,7 +83,11 @@ fun Type.listTupleActualTypes(): List<Type> {
     return (this as ParameterizedType).actualTypeArguments.toList()
 }
 
-fun Type.createTupleInstance(values: List<Any>): Any {
+fun Type.createTupleInstance(values: List<Any>): Any? {
+    if (values.isEmpty()) {
+        return null
+    }
+
     if (!isTuple()) {
         return values[0]
     }
