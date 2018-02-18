@@ -316,7 +316,11 @@ class SolUint256(value: BigInteger) : SolUint(value, 256) {
     constructor(l: Long) : this(l.toBigInteger())
 }
 
-data class SolAddress(val address: String) : SolType
+data class SolAddress(val address: String) : SolType {
+    init {
+        require(address.startsWith("0x"), { "The address needs to start with '0x'" })
+    }
+}
 
 sealed class SolBytes(val value: ByteArray, val size: Int) : SolType {
     init {

@@ -20,7 +20,7 @@ class Web3jAbi : Web3.Abi {
     @Suppress("UNCHECKED_CAST")
     override fun decodeParameters(types: List<java.lang.reflect.Type>, hexString: String): List<Any> {
         return FunctionReturnDecoder.decode(hexString,
-                types.mapNotNull { toWeb3jType(it) } as List<TypeReference<Type<Any>>>)
+                types.map { toWeb3jType(it) } as List<TypeReference<Type<Any>>>)
                 .map { toSolValue(it) }
     }
 
@@ -74,6 +74,9 @@ class Web3jAbi : Web3.Abi {
                 dataParams.map { toWeb3jType(it.type) })
     }
 
+    /**
+     * Convert a EtherSpace value to Web3j value.
+     */
     private fun toWeb3jValue(value: Any): Type<out Any> {
         return when (value) {
             is String -> Utf8String(value)
@@ -85,34 +88,60 @@ class Web3jAbi : Web3.Abi {
             is SolNumber -> value.toWeb3jValue()
             is SolAddress -> Address(value.address)
             is Byte -> Bytes1(byteArrayOf(value))
-            is SolBytes15 -> Bytes15(value.value)
-            is SolBytes32 -> Bytes32(value.value)
+            is SolBytes -> value.toWeb3jValue()
             is ByteArray -> DynamicBytes(value)
             is SolFixedArray<*> -> StaticArray(value.value.map { toWeb3jValue(it!!) })
             is Array<*> -> StaticArray(value.map { toWeb3jValue(it!!) })
             is List<*> -> DynamicArray(value.map { toWeb3jValue(it!!) })
-            else -> throw IllegalArgumentException()
+            else -> throw IllegalArgumentException("Unsupported data type:${value.javaClass.name}")
         }
     }
 
+    /**
+     * Convert a EtherSpace type to the type using in Web3j.
+     */
+    @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
     private fun toWeb3jType(type: java.lang.reflect.Type): TypeReference<out Type<out Any>> {
         val typeToken = TypeToken.of(type)
-        @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
         val web3jType = when {
             typeToken.childOf(String::class) -> Utf8String::class.java
             typeToken.childOf(Boolean::class) -> Bool::class.java
             typeToken.childOf(BigInteger::class) -> Int256::class.java
-            typeToken.childOf(SolNumber::class) -> typeToken.toWeb3jType()
+            typeToken.childOf(SolNumber::class) -> typeToken.toWeb3jNumberType()
             typeToken.childOf(SolAddress::class) -> Address::class.java
             typeToken.childOf(Byte::class) -> Bytes1::class.java
-            typeToken.childOf(SolBytes15::class) -> Bytes15::class.java
-            typeToken.childOf(SolBytes32::class) -> Bytes32::class.java
+            typeToken.childOf(SolBytes::class) -> typeToken.toWeb3jBytesType()
             typeToken.childOf(ByteArray::class) -> DynamicBytes::class.java
             typeToken.childOf(List::class) -> toWeb3jArrayType(typeToken)
             typeToken.childOf(SolFixedArray::class) -> return toWeb3jStaticArrayTypeReference(typeToken)
             else -> throw IllegalArgumentException("Unsupported data type:${type.typeName}")
         }
         return createTypeReference(web3jType)
+    }
+
+    /**
+     * Convert a Web3j value to EtherSpace value
+     */
+    private fun toSolValue(value: Type<Any>): Any {
+        return when (value) {
+            is Utf8String -> value.value
+            is Bool -> value.value
+            is Int256 -> value.value
+            is Int64 -> value.value.toLong()
+            is Int32 -> value.value.toInt()
+            is Int16 -> value.value.toShort()
+            is Uint64 -> value.value.toLong()
+            is Uint32 -> value.value.toInt()
+            is Uint16 -> value.value.toShort()
+            is NumericType -> value.toSolValue()
+            is Address -> SolAddress(value.value)
+            is Bytes1 -> value.value[0]
+            is Bytes -> value.toSolValue()
+            is DynamicBytes -> value.value
+            is StaticArray<*> -> value.toSolFixedArray()
+            is DynamicArray<*> -> value.value.map { toSolValue(it) }
+            else -> throw IllegalArgumentException("Unsupported data type:${value.javaClass.name}")
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -157,37 +186,16 @@ class Web3jAbi : Web3.Abi {
         }
     }
 
-    private fun toSolValue(value: Type<Any>): Any {
-        return when (value) {
-            is Utf8String -> value.value
-            is Bool -> value.value
-            is Int256 -> value.value
-            is Int64 -> value.value.toLong()
-            is Int32 -> value.value.toInt()
-            is Int16 -> value.value.toShort()
-            is Uint64 -> value.value.toLong()
-            is Uint32 -> value.value.toInt()
-            is Uint16 -> value.value.toShort()
-            is NumericType -> value.toSolValue()
-            is Address -> cc.etherspace.SolAddress(value.value)
-            is Bytes1 -> value.value[0]
-            is Bytes15 -> cc.etherspace.SolBytes15(value.value)
-            is Bytes32 -> cc.etherspace.SolBytes32(value.value)
-            is DynamicBytes -> value.value
-            is StaticArray<*> -> value.toSolFixedArray()
-            is DynamicArray<*> -> value.value.map { toSolValue(it) }
-            else -> throw IllegalArgumentException()
-        }
-    }
-
     private fun StaticArray<*>.toSolFixedArray(): SolFixedArray<*> {
-        val constructor = Class.forName(javaClass.name.replace("$WEB3J_ABI_DATATYPES_PACKAGE.Static",
+        val constructor = Class.forName(javaClass.name.replace("$WEB3J_ABI_DATA_TYPES_PACKAGE.Static",
                 "$SOL_TYPE_PACKAGE.Sol")).getConstructor(Array<Any>::class.java)
         return constructor.newInstance(value.map { toSolValue(it) }.toTypedArray()) as SolFixedArray<*>
     }
 
-    private fun TypeToken<*>.toWeb3jType(): Class<*> = Class.forName(type.typeName.replace("$SOL_TYPE_PACKAGE.Sol",
-            "$WEB3J_ABI_DATATYPES_PACKAGE.")) as Class<*>
+    private fun TypeToken<*>.toWeb3jBytesType(): Class<*> = toWeb3jNumberType()
+
+    private fun TypeToken<*>.toWeb3jNumberType(): Class<*> = Class.forName(type.typeName.replace("$SOL_TYPE_PACKAGE.Sol",
+            "$WEB3J_ABI_DATA_TYPES_PACKAGE.")) as Class<*>
 
     private fun TypeToken<out Any>.childOf(kClass: KClass<out Any>): Boolean {
         return isSubtypeOf(kClass.java)
@@ -195,14 +203,26 @@ class Web3jAbi : Web3.Abi {
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : NumericType> SolNumber.toWeb3jValue(): Type<T> = Class.forName(javaClass.name.replace("$SOL_TYPE_PACKAGE.Sol",
-            "$WEB3J_ABI_DATATYPES_PACKAGE."))
+            "$WEB3J_ABI_DATA_TYPES_PACKAGE."))
             .getConstructor(BigInteger::class.java)
             .newInstance(value) as Type<T>
 
     @Suppress("UNCHECKED_CAST")
+    private fun <T : Bytes> SolBytes.toWeb3jValue(): Type<T> = Class.forName(javaClass.name.replace("$SOL_TYPE_PACKAGE.Sol",
+            "$WEB3J_ABI_DATA_TYPES_PACKAGE."))
+            .getConstructor(ByteArray::class.java)
+            .newInstance(value) as Type<T>
+
+    @Suppress("UNCHECKED_CAST")
     private fun <T : SolNumber> NumericType.toSolValue(): T {
-        return Class.forName(javaClass.name.replace("$WEB3J_ABI_DATATYPES_PACKAGE.",
+        return Class.forName(javaClass.name.replace("$WEB3J_ABI_DATA_TYPES_PACKAGE.",
                 "$SOL_TYPE_PACKAGE.Sol")).getConstructor(BigInteger::class.java).newInstance(value) as T
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : SolBytes> Bytes.toSolValue(): T {
+        return Class.forName(javaClass.name.replace("$WEB3J_ABI_DATA_TYPES_PACKAGE.",
+                "$SOL_TYPE_PACKAGE.Sol")).getConstructor(ByteArray::class.java).newInstance(value) as T
     }
 
     private fun TypeToken<*>.toSolTypeSize(): Int {
@@ -210,7 +230,7 @@ class Web3jAbi : Web3.Abi {
     }
 
     companion object {
-        private val WEB3J_ABI_DATATYPES_PACKAGE = AbiTypes::class.java.`package`.name
+        private val WEB3J_ABI_DATA_TYPES_PACKAGE = AbiTypes::class.java.`package`.name
         private val SOL_TYPE_PACKAGE = SolType::class.java.`package`.name
     }
 }

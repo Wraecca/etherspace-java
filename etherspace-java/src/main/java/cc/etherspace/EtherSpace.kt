@@ -14,12 +14,12 @@ import java.lang.reflect.Type
 
 class EtherSpace(private val web3: Web3jAdapter,
                  private val credentials: Credentials?,
-                 private val callAdapters: List<CallAdapter<Any, Any?>>) {
+                 private val callAdapters: List<CallAdapter<Any, Any>>) {
     @Suppress("UNCHECKED_CAST")
     fun <T> create(toAddress: String, service: Class<T>): T {
-        val defaultOptions = createOptionsFromAnnotation(service)
+        val defaultOptionsFromClasses = createOptionsFromAnnotation(service)
         return Proxy.newProxyInstance(service.classLoader, arrayOf(service)) { _, method, args ->
-            invokeFunction(toAddress, method, args?.toList() ?: emptyList(), defaultOptions)
+            invokeFunction(toAddress, method, args?.toList() ?: emptyList(), defaultOptionsFromClasses)
         } as T
     }
 
@@ -27,10 +27,11 @@ class EtherSpace(private val web3: Web3jAdapter,
     private fun invokeFunction(toAddress: String,
                                method: Method,
                                args: List<Any>,
-                               defaultOptions: Options): Any? {
+                               defaultOptions: Options): Any {
         val options = (args.firstOrNull { it is Options } ?: createOptionsFromAnnotation(method,
                 defaultOptions)) as Options
         val params = args.filter { it !is Options }
+
         val callAdapter = callAdapters.first { it.adaptable(method.genericReturnType, method.annotations) }
         val actualReturnType = callAdapter.toActualReturnType(method.genericReturnType)
         return callAdapter.adapt {
@@ -51,8 +52,7 @@ class EtherSpace(private val web3: Web3jAdapter,
                         if (functionName.isNotBlank()) functionName else method.name,
                         params,
                         actualReturnType,
-                        options
-                )
+                        options)
             }
 
             throw IllegalArgumentException("There is no Send/Call annotation on this method")
@@ -73,10 +73,8 @@ class EtherSpace(private val web3: Web3jAdapter,
                                           returnType: Type,
                                           options: Options): Any {
         val cd = options.credentials ?: credentials ?: throw IllegalArgumentException("Credentials not set")
-        val contractFunction = ContractFunction(functionName,
-                args,
-                returnType.listTupleActualTypes())
-        val encodedFunction = web3.abi.encodeFunctionCall(contractFunction.args, contractFunction.name)
+        val encodedFunction = web3.abi.encodeFunctionCall(args, functionName)
+        // TODO Better way to get a nonce?
         val nonce = web3.eth.getTransactionCount(cd.address)
         val transactionObject = Web3.TransactionObject(cd.address,
                 toAddress,
@@ -95,9 +93,9 @@ class EtherSpace(private val web3: Web3jAdapter,
                     }
                     sleep(GET_TRANSACTION_RECEIPT_POLLING_INTERVAL_IN_MS)
                 }
-                throw IOException("Unable to get transaction receipt")
+                throw IOException("Unable to get transaction receipt because of timeout.")
             }
-            else -> throw IllegalArgumentException("Unknown return type")
+            else -> throw IllegalArgumentException("Unknown return type:${returnType.typeName}")
         }
     }
 
@@ -106,17 +104,14 @@ class EtherSpace(private val web3: Web3jAdapter,
                                    functionName: String,
                                    args: List<Any>,
                                    returnType: Type,
-                                   options: Options): Any? {
-        val contractFunction = ContractFunction(functionName,
-                args,
-                returnType.listTupleActualTypes())
-        val encodedFunction = web3.abi.encodeFunctionCall(contractFunction.args, contractFunction.name)
+                                   options: Options): Any {
+        val encodedFunction = web3.abi.encodeFunctionCall(args, functionName)
         val transactionObject = Web3.TransactionObject(null,
                 toAddress,
                 encodedFunction,
                 options)
         val data = web3.eth.call(transactionObject)
-        val values = web3.abi.decodeParameters(contractFunction.returnTypes, data)
+        val values = web3.abi.decodeParameters(returnType.listTupleActualTypes(), data)
         return returnType.createTupleInstance(values)
     }
 
@@ -126,7 +121,7 @@ class EtherSpace(private val web3: Web3jAdapter,
 
         var credentials: Credentials? = null
 
-        var callAdapters: List<CallAdapter<Any, Any?>> = mutableListOf()
+        var callAdapters: List<CallAdapter<Any, Any>> = mutableListOf()
 
         var client: OkHttpClient? = null
 
@@ -145,10 +140,6 @@ class EtherSpace(private val web3: Web3jAdapter,
                     callAdapters + PassThroughCallAdaptor())
         }
     }
-
-    private data class ContractFunction(val name: String,
-                                        val args: List<Any>,
-                                        val returnTypes: List<Type>)
 
     companion object {
         inline fun build(block: Builder.() -> Unit) = Builder().apply(block).build()

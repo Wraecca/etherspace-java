@@ -29,10 +29,10 @@ public class JavaGreeterTest {
         assertThat(greet).isEqualTo("Hello World");
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void greet_wrongFunctionName() {
         String greet = greeter.greet_wrongFunctionName();
-        assertThat(greet).isNull();
+        assertThat(greet).isEqualTo("Hello World");
     }
 
     @Test

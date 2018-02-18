@@ -60,11 +60,14 @@ data class Tuple10<out A, out B, out C, out D, out E, out F, out G, out H, out I
                                                                                          val ninth: I,
                                                                                          val tenth: J) : Tuple
 
+/**
+ * @return true if this is a Pair, Triple, or Tuple4~10
+ */
+@Suppress("UNCHECKED_CAST")
 fun Type.isTuple(): Boolean {
     if (this !is ParameterizedType) {
         return false
     }
-    @Suppress("UNCHECKED_CAST")
     val rawClass = rawType as Class<Any>
     if (Pair::class.java.isAssignableFrom(rawClass) ||
             Triple::class.java.isAssignableFrom(rawClass) ||
@@ -74,27 +77,24 @@ fun Type.isTuple(): Boolean {
     return false
 }
 
+@Suppress("UNCHECKED_CAST")
 fun Type.listTupleActualTypes(): List<Type> {
     if (!isTuple()) {
         return listOf(this)
     }
-
-    @Suppress("UNCHECKED_CAST")
     return (this as ParameterizedType).actualTypeArguments.toList()
 }
 
-fun Type.createTupleInstance(values: List<Any>): Any? {
-    if (values.isEmpty()) {
-        return null
-    }
+@Suppress("UNCHECKED_CAST")
+fun Type.createTupleInstance(values: List<Any>): Any {
+    require(values.isNotEmpty(), { "A call to Solidity function should return something instead of empty data" })
 
     if (!isTuple()) {
         return values[0]
     }
 
-    @Suppress("UNCHECKED_CAST")
     val rawClass = (this as ParameterizedType).rawType as Class<Any>
-    // TODO rethrow this exception
-    val constructor = rawClass.constructors.first { it.parameterCount == values.size }
-    return constructor.newInstance(*values.toTypedArray())
+    val constructor = rawClass.constructors.firstOrNull { it.parameterCount == values.size }
+    checkNotNull(constructor, { "Number of arguments is not the same as the size of this Tuple(or Pair, Triple)" })
+    return constructor!!.newInstance(*values.toTypedArray())
 }

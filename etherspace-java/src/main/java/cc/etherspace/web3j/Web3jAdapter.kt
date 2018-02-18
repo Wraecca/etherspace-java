@@ -27,6 +27,7 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
     override val eth: Web3jEth = Web3jEth()
 
     inner class Web3jEth : Web3.Eth {
+        @Throws(IOException::class)
         override fun getTransactionReceipt(transactionHash: String): cc.etherspace.TransactionReceipt? {
             val response = web3j.ethGetTransactionReceipt(transactionHash).send()
             if (response.hasError()) {
@@ -60,6 +61,7 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
                     blockNumber)
         }
 
+        @Throws(IOException::class)
         override fun call(transactionObject: Web3.TransactionObject, defaultBlock: Web3.DefaultBlock): String {
             val transaction = Transaction.createEthCallTransaction(transactionObject.from,
                     transactionObject.to,
@@ -71,6 +73,7 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
             return response.value
         }
 
+        @Throws(IOException::class)
         override fun getTransactionCount(address: String, defaultBlock: Web3.DefaultBlock): BigInteger {
             val response = web3j.ethGetTransactionCount(address, defaultBlock.toDefaultBlockParameter()).send()
             if (response.hasError()) {
@@ -87,12 +90,14 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
             return Numeric.toHexString(signedMessage)
         }
 
+        @Throws(IOException::class)
         override fun sendTransaction(transactionObject: Web3.TransactionObject,
                                      credentials: cc.etherspace.Credentials): String {
             val signTransaction = signTransaction(transactionObject, credentials)
             return sendSignedTransaction(signTransaction)
         }
 
+        @Throws(IOException::class)
         override fun sendSignedTransaction(signedTransactionData: String): String {
             val response = web3j.ethSendRawTransaction(signedTransactionData).send()
             if (response.hasError()) {

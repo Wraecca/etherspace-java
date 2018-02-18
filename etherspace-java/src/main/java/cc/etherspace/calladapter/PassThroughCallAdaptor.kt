@@ -2,10 +2,10 @@ package cc.etherspace.calladapter
 
 import java.lang.reflect.Type
 
-class PassThroughCallAdaptor<T> : CallAdapter<T, T?> {
+class PassThroughCallAdaptor<T> : CallAdapter<T, T> {
     override fun toActualReturnType(type: Type): Type = type
 
-    override fun adapt(block: () -> T?): T? {
+    override fun adapt(block: () -> T): T {
         return block()
     }
 
