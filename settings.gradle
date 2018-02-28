@@ -1,3 +1,4 @@
 rootProject.name = 'etherspace-java-root'
 include 'etherspace-java'
-
+include 'etherspace-java-example'
+include ':etherspace-android', ':etherspace-android-example'
