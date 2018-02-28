@@ -35,4 +35,4 @@ annotation class EventConstructor
  */
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @MustBeDocumented
-annotation class Indexed(val argumentType: KClass<out Any>)
+annotation class Indexed(val value: KClass<out Any>)

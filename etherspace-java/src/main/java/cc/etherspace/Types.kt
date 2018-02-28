@@ -346,7 +346,6 @@ sealed class SolBytes(val value: ByteArray, val size: Int) : SolType {
     }
 }
 
-class SolBytes1(value: ByteArray) : SolBytes(value, 1)
 class SolBytes2(value: ByteArray) : SolBytes(value, 2)
 class SolBytes3(value: ByteArray) : SolBytes(value, 3)
 class SolBytes4(value: ByteArray) : SolBytes(value, 4)

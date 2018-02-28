@@ -11,7 +11,7 @@ import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.Event
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.*
-import unsigned.toBigInt
+import unsigned.*
 import java.lang.reflect.Constructor
 import java.math.BigInteger
 import kotlin.reflect.KClass
@@ -69,7 +69,7 @@ class Web3jAbi : Web3.Abi {
         val dataParams = constructor.parameters.filter { !indexedParams.contains(it) }
         return Event(eventName,
                 indexedParams.map {
-                    toWeb3jType(it.getAnnotation(Indexed::class.java).argumentType.java)
+                    toWeb3jType(it.getAnnotation(Indexed::class.java).value.java)
                 },
                 dataParams.map { toWeb3jType(it.type) })
     }
@@ -85,6 +85,9 @@ class Web3jAbi : Web3.Abi {
             is Short -> Int16(value.toBigInt())
             is Int -> Int32(value.toBigInteger())
             is Long -> Int64(value.toBigInteger())
+            is unsigned.Ushort -> Uint16(value.toBigInt())
+            is unsigned.Uint -> Uint32(value.toBigInt())
+            is unsigned.Ulong -> Uint64(value.toBigInt())
             is SolNumber -> value.toWeb3jValue()
             is SolAddress -> Address(value.address)
             is Byte -> Bytes1(byteArrayOf(value))
@@ -107,6 +110,12 @@ class Web3jAbi : Web3.Abi {
             typeToken.childOf(String::class) -> Utf8String::class.java
             typeToken.childOf(Boolean::class) -> Bool::class.java
             typeToken.childOf(BigInteger::class) -> Int256::class.java
+            typeToken.childOf(Short::class) -> Int16::class.java
+            typeToken.childOf(Int::class) -> Int32::class.java
+            typeToken.childOf(Long::class) -> Int64::class.java
+            typeToken.childOf(Ushort::class) -> Uint16::class.java
+            typeToken.childOf(unsigned.Uint::class) -> Uint32::class.java
+            typeToken.childOf(Ulong::class) -> Uint64::class.java
             typeToken.childOf(SolNumber::class) -> typeToken.toWeb3jNumberType()
             typeToken.childOf(SolAddress::class) -> Address::class.java
             typeToken.childOf(Byte::class) -> Bytes1::class.java
@@ -130,9 +139,9 @@ class Web3jAbi : Web3.Abi {
             is Int64 -> value.value.toLong()
             is Int32 -> value.value.toInt()
             is Int16 -> value.value.toShort()
-            is Uint64 -> value.value.toLong()
-            is Uint32 -> value.value.toInt()
-            is Uint16 -> value.value.toShort()
+            is Uint64 -> value.value.toUlong()
+            is Uint32 -> value.value.toUint()
+            is Uint16 -> value.value.toUshort()
             is NumericType -> value.toSolValue()
             is Address -> SolAddress(value.value)
             is Bytes1 -> value.value[0]

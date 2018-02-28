@@ -4,7 +4,6 @@ import cc.etherspace.*;
 import rx.Observable;
 
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 public interface RxGreeter {
     @Send
@@ -27,7 +26,7 @@ public interface RxGreeter {
         private String newGreeting;
 
         @EventConstructor
-        public Modified(@Indexed(argumentType = String.class) SolBytes32 oldGreetingIdx, @Indexed(argumentType = String.class) SolBytes32 newGreetingIdx, String oldGreeting, String newGreeting) {
+        public Modified(@Indexed(value = String.class) SolBytes32 oldGreetingIdx, @Indexed(value = String.class) SolBytes32 newGreetingIdx, String oldGreeting, String newGreeting) {
             this.oldGreetingIdx = oldGreetingIdx;
             this.newGreetingIdx = newGreetingIdx;
             this.oldGreeting = oldGreeting;

@@ -24,7 +24,7 @@ public interface JavaGreeter {
         private String newGreeting;
 
         @EventConstructor
-        public Modified(@Indexed(argumentType = String.class) SolBytes32 oldGreetingIdx, @Indexed(argumentType = String.class) SolBytes32 newGreetingIdx, String oldGreeting, String newGreeting) {
+        public Modified(@Indexed(String.class) SolBytes32 oldGreetingIdx, @Indexed(String.class) SolBytes32 newGreetingIdx, String oldGreeting, String newGreeting) {
             this.oldGreetingIdx = oldGreetingIdx;
             this.newGreetingIdx = newGreetingIdx;
             this.oldGreeting = oldGreeting;
@@ -74,7 +74,6 @@ public interface JavaGreeter {
 
         @Override
         public int hashCode() {
-
             return Objects.hash(oldGreetingIdx, newGreetingIdx);
         }
     }

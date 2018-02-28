@@ -29,8 +29,8 @@ interface CoroutineGreeter {
     @Call
     fun personalGreet(): Deferred<Pair<String, String>>
 
-    data class Modified @EventConstructor constructor(@Indexed(argumentType = String::class) val oldGreetingIdx: SolBytes32,
-                                                      @Indexed(argumentType = String::class) val newGreetingIdx: SolBytes32,
+    data class Modified @EventConstructor constructor(@Indexed(value = String::class) val oldGreetingIdx: SolBytes32,
+                                                      @Indexed(value = String::class) val newGreetingIdx: SolBytes32,
                                                       val oldGreeting: String,
                                                       val newGreeting: String)
 }

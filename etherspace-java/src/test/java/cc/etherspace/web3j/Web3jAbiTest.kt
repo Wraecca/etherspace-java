@@ -265,6 +265,6 @@ class Web3jAbiTest {
     }
 
     data class DecodeLog @EventConstructor constructor(val myString: String,
-                                                       @Indexed(argumentType = SolUint256::class) val myNumber: SolUint256,
-                                                       @Indexed(argumentType = SolUint8::class) val mySmallNumber: SolUint8)
+                                                       @Indexed(value = SolUint256::class) val myNumber: SolUint256,
+                                                       @Indexed(value = SolUint8::class) val mySmallNumber: SolUint8)
 }

@@ -80,8 +80,8 @@ interface Greeter {
     @Call
     fun bytesType(byte: ByteArray): ByteArray
 
-    data class Modified @EventConstructor constructor(@Indexed(argumentType = String::class) val oldGreetingIdx: SolBytes32,
-                                                      @Indexed(argumentType = String::class) val newGreetingIdx: SolBytes32,
+    data class Modified @EventConstructor constructor(@Indexed(String::class) val oldGreetingIdx: SolBytes32,
+                                                      @Indexed(String::class) val newGreetingIdx: SolBytes32,
                                                       val oldGreeting: String,
                                                       val newGreeting: String)
 }

@@ -15,10 +15,9 @@ public class JavaGreeterTest {
 
     @Before
     public void setUp() {
-        Credentials credentials = new Credentials("0xab1e199623aa5bb2c381c349b1734e31b5be08de0486ffab68e3af4853d9980b");
         EtherSpace etherSpace = new EtherSpace.Builder()
                 .provider("https://rinkeby.infura.io/")
-                .credentials(credentials)
+                .credentials(new Credentials("0xab1e199623aa5bb2c381c349b1734e31b5be08de0486ffab68e3af4853d9980b"))
                 .build();
         greeter = etherSpace.create("0xa871c507184ecfaf947253e187826c1907e8dc7d", JavaGreeter.class);
     }

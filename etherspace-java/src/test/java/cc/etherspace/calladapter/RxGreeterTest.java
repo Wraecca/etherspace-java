@@ -4,6 +4,7 @@ import cc.etherspace.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.web3j.utils.Numeric;
+import rx.functions.Action1;
 import rx.observers.TestSubscriber;
 
 import java.io.IOException;
@@ -35,6 +36,8 @@ public class RxGreeterTest {
         subscriber.assertNoErrors();
         subscriber.assertValueCount(1);
         assertThat(subscriber.getOnNextEvents().get(0)).isEqualTo("Hello World");
+
+        greeter.greet().subscribe(System.out::println);
     }
 
     @Test

@@ -11,7 +11,7 @@ import org.web3j.utils.Numeric
 import java.io.IOException
 import java.math.BigInteger
 
-class GreaterTest {
+class GreeterTest {
     private lateinit var greeter: Greeter
 
     @Before
