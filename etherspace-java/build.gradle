@@ -33,8 +33,8 @@ dependencies {
     // https://mvnrepository.com/artifact/org.mockito/mockito-inline
     testCompile group: 'org.mockito', name: 'mockito-inline', version: '2.12.0'
 
-    // https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjava
-    compileOnly group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.9'
+    // https://mvnrepository.com/artifact/io.reactivex/rxjava
+    compile group: 'io.reactivex', name: 'rxjava', version: '1.3.6'
 
     // web3j
     compile 'org.web3j:core:3.2.0'

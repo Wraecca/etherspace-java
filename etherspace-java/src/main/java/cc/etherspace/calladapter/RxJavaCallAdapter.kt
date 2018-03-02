@@ -4,7 +4,7 @@ import rx.Observable
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
-class RxCallAdapter<T> : CallAdapter<T, Observable<T>> {
+class RxJavaCallAdapter<T> : CallAdapter<T, Observable<T>> {
     override fun adapt(block: () -> T): Observable<T> {
         return Observable.create {
             try {

@@ -4,7 +4,6 @@ import cc.etherspace.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.web3j.utils.Numeric;
-import rx.functions.Action1;
 import rx.observers.TestSubscriber;
 
 import java.io.IOException;
@@ -13,8 +12,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RxGreeterTest {
-    private RxGreeter greeter;
+public class RxJavaGreeterTest {
+    private RxJavaGreeter greeter;
 
     @Before
     public void setUp() {
@@ -22,9 +21,9 @@ public class RxGreeterTest {
         EtherSpace etherSpace = new EtherSpace.Builder()
                 .provider("https://rinkeby.infura.io/")
                 .credentials(credentials)
-                .addCallAdapter(new RxCallAdapter<>())
+                .addCallAdapter(new RxJavaCallAdapter<>())
                 .build();
-        greeter = etherSpace.create("0xa871c507184ecfaf947253e187826c1907e8dc7d", RxGreeter.class);
+        greeter = etherSpace.create("0xa871c507184ecfaf947253e187826c1907e8dc7d", RxJavaGreeter.class);
     }
 
     @Test

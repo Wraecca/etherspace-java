@@ -5,7 +5,7 @@ import rx.Observable;
 
 import java.util.Objects;
 
-public interface RxGreeter {
+public interface RxJavaGreeter {
     @Send
     Observable<TransactionReceipt> newGreeting(String greeting);
 
