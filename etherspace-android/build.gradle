@@ -31,7 +31,10 @@ dependencies {
     implementation group: 'com.google.guava', name: 'guava', version: '24.0-android'
 
     // etherspace
-    implementation project(':etherspace-java')
+    implementation('cc.etherspace.etherspace-java:etherspace-java:0.1.0') {
+        exclude group: 'com.google.guava'
+        exclude group: 'org.web3j'
+    }
 
     // web3j
     implementation('org.web3j:core:3.3.1-android')

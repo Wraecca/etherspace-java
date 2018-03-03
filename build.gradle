@@ -19,6 +19,9 @@ allprojects {
         mavenCentral()
         maven { url 'https://jitpack.io' }
     }
+
+    group GROUP
+    version VERSION_NAME
 }
 
 task clean(type: Delete) {
