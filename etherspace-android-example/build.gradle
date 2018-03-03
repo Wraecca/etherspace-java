@@ -6,7 +6,7 @@ android {
     compileSdkVersion 26
 
     defaultConfig {
-        applicationId "com.zaoo.etherspaceexample"
+        applicationId "cc.etherspace.example"
         minSdkVersion 24
         targetSdkVersion 26
         versionCode 1

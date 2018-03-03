@@ -1,4 +1,4 @@
-package com.zaoo.etherspaceexample
+package cc.etherspace.example
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
