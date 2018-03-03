@@ -1,9 +1,5 @@
 apply plugin: 'kotlin'
 
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-
 dependencies {
     // etherspace
     compile project(':etherspace-java')

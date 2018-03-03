@@ -1,9 +1,5 @@
 apply plugin: 'kotlin'
 
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-
 dependencies {
     // assertj
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.8.0'
@@ -37,8 +33,8 @@ dependencies {
     compile group: 'io.reactivex', name: 'rxjava', version: '1.3.6'
 
     // web3j
-    compile 'org.web3j:core:3.2.0'
-    compile 'org.web3j:infura:3.2.0'
+    compile 'org.web3j:core:3.3.1'
+    compile 'org.web3j:infura:3.3.1'
 }
 
 compileKotlin {
