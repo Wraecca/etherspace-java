@@ -18,9 +18,7 @@ import java.io.IOException
 import java.math.BigInteger
 
 class Web3jAdapter(val web3j: Web3j) : Web3 {
-    constructor(provider: String, client: OkHttpClient?) : this(Web3j.build(
-            if (client != null) HttpService(provider, client, false) else HttpService(provider)
-    ))
+    constructor(provider: String, client: OkHttpClient?) : this(createWeb3j(client, provider))
 
     override val abi: Web3.Abi = Web3jAbi()
 
@@ -149,6 +147,21 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
                             value,
                             log)
                 }
+            }
+        }
+    }
+
+    companion object {
+        private fun createWeb3j(client: OkHttpClient?, provider: String): Web3j {
+            val httpService = if (client != null) HttpService(provider, client, false) else HttpService(provider)
+            return try {
+                // For android
+                val web3jFactoryClass = Class.forName("org.web3j.protocol.Web3jFactory")
+                val web3jServiceClass = Class.forName("org.web3j.protocol.Web3jService")
+                val buildMethod = web3jFactoryClass.getMethod("build", web3jServiceClass)
+                buildMethod.invoke(null, httpService) as Web3j
+            } catch (e: Exception) {
+                Web3j.build(httpService)
             }
         }
     }
