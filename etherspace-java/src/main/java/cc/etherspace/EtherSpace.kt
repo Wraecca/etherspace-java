@@ -143,7 +143,7 @@ class EtherSpace(private val web3: Web3jAdapter,
 
     companion object {
         inline fun build(block: Builder.() -> Unit) = Builder().apply(block).build()
-        private const val GET_TRANSACTION_RECEIPT_POLLING_INTERVAL_IN_MS = 1_000L
-        private const val GET_TRANSACTION_RECEIPT_POLLING_ATTEMPTS = 40
+        private const val GET_TRANSACTION_RECEIPT_POLLING_INTERVAL_IN_MS = 5_000L
+        private const val GET_TRANSACTION_RECEIPT_POLLING_ATTEMPTS = 60
     }
 }
