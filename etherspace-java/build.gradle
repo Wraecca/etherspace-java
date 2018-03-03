@@ -15,8 +15,8 @@ dependencies {
     testCompile 'org.amshove.kluent:kluent:1.30'
 
     // kotlin
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 
     // kotlinx-coroutines
@@ -38,8 +38,12 @@ dependencies {
 }
 
 compileKotlin {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
     kotlinOptions.jvmTarget = "1.8"
 }
 compileTestKotlin {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
     kotlinOptions.jvmTarget = "1.8"
 }
