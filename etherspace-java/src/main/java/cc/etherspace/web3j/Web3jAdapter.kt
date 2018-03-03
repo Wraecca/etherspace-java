@@ -33,7 +33,9 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
             if (response.hasError()) {
                 throw IOException("Error processing request: " + response.error.message)
             }
-            return response.transactionReceipt.map { it.toWeb3TransactionReceipt() }.orElse(null)
+            // require android sdk 24
+            //return response.transactionReceipt.map { it.toWeb3TransactionReceipt() }.orElse(null)
+            return if (response.result != null) response.result.toWeb3TransactionReceipt() else null
         }
 
         private fun TransactionReceipt.toWeb3TransactionReceipt(): cc.etherspace.TransactionReceipt {
