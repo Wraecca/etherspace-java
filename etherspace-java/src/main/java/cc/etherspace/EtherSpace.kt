@@ -12,8 +12,8 @@ import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 import java.lang.reflect.Type
 
-class EtherSpace(private val web3: Web3jAdapter,
-                 private val credentials: Credentials?,
+class EtherSpace(val web3: Web3,
+                 val credentials: Credentials?,
                  private val callAdapters: List<CallAdapter<Any, Any>>) {
     @Suppress("UNCHECKED_CAST")
     fun <T> create(toAddress: String, service: Class<T>): T {
