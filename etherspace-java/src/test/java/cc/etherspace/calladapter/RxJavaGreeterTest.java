@@ -17,13 +17,13 @@ public class RxJavaGreeterTest {
 
     @Before
     public void setUp() {
-        Credentials credentials = new Credentials("0xab1e199623aa5bb2c381c349b1734e31b5be08de0486ffab68e3af4853d9980b");
+        Credentials credentials = new Credentials(Tests.TEST_WALLET_KEY);
         EtherSpace etherSpace = new EtherSpace.Builder()
                 .provider("https://rinkeby.infura.io/")
                 .credentials(credentials)
                 .addCallAdapter(new RxJavaCallAdapter<>())
                 .build();
-        greeter = etherSpace.create("0xa871c507184ecfaf947253e187826c1907e8dc7d", RxJavaGreeter.class);
+        greeter = etherSpace.create(Tests.TEST_CONTRACT_ADDRESS, RxJavaGreeter.class);
     }
 
     @Test
@@ -57,8 +57,8 @@ public class RxJavaGreeterTest {
         TransactionReceipt receipt = subscriber.getOnNextEvents().get(0);
         assertThat(receipt.getBlockHash().length()).isEqualTo(66);
         assertThat(receipt.getTransactionHash().length()).isEqualTo(66);
-        assertThat(receipt.getFrom()).isEqualTo("0x39759a3c0ada2d61b6ca8eb6afc8243075307ed3");
-        assertThat(receipt.getTo()).isEqualTo("0xa871c507184ecfaf947253e187826c1907e8dc7d");
+        assertThat(receipt.getFrom()).isEqualTo(Tests.TEST_WALLET_ADDRESS);
+        assertThat(receipt.getTo()).isEqualTo(Tests.TEST_CONTRACT_ADDRESS);
         assertThat(receipt.getLogs().size()).isGreaterThan(0);
 
         List<Event<JavaGreeter.Modified>> events = receipt.listEvents(JavaGreeter.Modified.class);

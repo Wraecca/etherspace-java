@@ -129,7 +129,7 @@ class Web3jAbiTest {
 
     @Test
     fun encodeFunctionCall_addressType() {
-        val enc = web3jAbi.encodeFunctionCall(listOf(SolAddress("0xa871c507184ecfaf947253e187826c1907e8dc7d")),
+        val enc = web3jAbi.encodeFunctionCall(listOf(SolAddress(Tests.TEST_CONTRACT_ADDRESS)),
                 "addressType")
         enc.`should equal to`("0x99ddb29b000000000000000000000000a871c507184ecfaf947253e187826c1907e8dc7d")
     }
@@ -138,7 +138,7 @@ class Web3jAbiTest {
     fun decodeParameters_address() {
         val list = web3jAbi.decodeParameters(listOf(SolAddress::class.java),
                 "000000000000000000000000a871c507184ecfaf947253e187826c1907e8dc7d")
-        list.`should equal`(listOf(SolAddress("0xa871c507184ecfaf947253e187826c1907e8dc7d")))
+        list.`should equal`(listOf(SolAddress(Tests.TEST_CONTRACT_ADDRESS)))
     }
 
     @Test

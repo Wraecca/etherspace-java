@@ -14,7 +14,7 @@ public class CompletableFutureExample {
         // Please fill in your private key or wallet file.
         EtherSpace etherSpace = new EtherSpace.Builder()
                 .provider("https://rinkeby.infura.io/")
-                .credentials(new Credentials("0xab1e199623aa5bb2c381c349b1734e31b5be08de0486ffab68e3af4853d9980b"))
+                .credentials(new Credentials("YOUR_PRIVATE_KEY_OR_WALLET"))
                 .addCallAdapter(new CompletableFutureCallAdapter<>())
                 .build();
         // The greeter smart contract has already been deployed to this address on rinkeby.

@@ -24,18 +24,21 @@ class ExampleModule(private val application: Application) {
         // Please fill in your private key or wallet file.
         return EtherSpace.Builder()
                 .provider("https://rinkeby.infura.io/")
-                .credentials(Credentials("0xab1e199623aa5bb2c381c349b1734e31b5be08de0486ffab68e3af4853d9980b"))
+                .credentials(Credentials("YOUR_PRIVATE_KEY_OR_WALLET"))
                 .addCallAdapter(CoroutineCallAdapter())
                 .build()
 
         // Won't compile. A dagger bug?
 //        return EtherSpace.build {
 //            provider = "https://rinkeby.infura.io/"
-//            credentials = Credentials("0xab1e199623aa5bb2c381c349b1734e31b5be08de0486ffab68e3af4853d9980b")
+//            credentials = Credentials(Tests.TEST_WALLET_KEY)
 //            callAdapters += CoroutineCallAdapter()
 //        }
     }
 
+    /**
+     * The greeter smart contract has already been deployed to this address on rinkeby.
+     */
     @Provides
     @Singleton
     fun provideGreeter(etherSpace: EtherSpace): Greeter =

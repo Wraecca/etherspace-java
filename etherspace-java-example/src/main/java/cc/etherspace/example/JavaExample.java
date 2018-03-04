@@ -12,7 +12,7 @@ public class JavaExample {
         // Please fill in your private key or wallet file.
         EtherSpace etherSpace = new EtherSpace.Builder()
                 .provider("https://rinkeby.infura.io/")
-                .credentials(new Credentials("0xab1e199623aa5bb2c381c349b1734e31b5be08de0486ffab68e3af4853d9980b"))
+                .credentials(new Credentials("YOUR_PRIVATE_KEY_OR_WALLET"))
                 .build();
         // The greeter smart contract has already been deployed to this address on rinkeby.
         Greeter greeter = etherSpace.create("0x7c7fd86443a8a0b249080cfab29f231c31806527", Greeter.class);

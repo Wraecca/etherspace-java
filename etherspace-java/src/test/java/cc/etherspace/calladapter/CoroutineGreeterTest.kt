@@ -1,9 +1,6 @@
 package cc.etherspace.calladapter
 
-import cc.etherspace.Credentials
-import cc.etherspace.EtherSpace
-import cc.etherspace.Options
-import cc.etherspace.SolBytes32
+import cc.etherspace.*
 import kotlinx.coroutines.experimental.runBlocking
 import org.amshove.kluent.`should be greater than`
 import org.amshove.kluent.`should equal to`
@@ -21,10 +18,10 @@ class CoroutineGreeterTest {
     fun setUp() {
         val etherSpace = EtherSpace.build {
             provider = "https://rinkeby.infura.io/"
-            credentials = Credentials("0xab1e199623aa5bb2c381c349b1734e31b5be08de0486ffab68e3af4853d9980b")
+            credentials = Credentials(Tests.TEST_WALLET_KEY)
             callAdapters += CoroutineCallAdapter()
         }
-        greeter = etherSpace.create("0xa871c507184ecfaf947253e187826c1907e8dc7d", CoroutineGreeter::class.java)
+        greeter = etherSpace.create(Tests.TEST_CONTRACT_ADDRESS, CoroutineGreeter::class.java)
     }
 
     @Test
@@ -33,8 +30,8 @@ class CoroutineGreeterTest {
             val receipt = greeter.newGreeting("Hello World").await()
             receipt.blockHash.length.`should equal to`(66)
             receipt.transactionHash.length.`should equal to`(66)
-            receipt.from.`should equal to`("0x39759a3c0ada2d61b6ca8eb6afc8243075307ed3")
-            receipt.to.`should equal to`("0xa871c507184ecfaf947253e187826c1907e8dc7d")
+            receipt.from.`should equal to`(Tests.TEST_WALLET_ADDRESS)
+            receipt.to.`should equal to`(Tests.TEST_CONTRACT_ADDRESS)
             receipt.logs.size.`should be greater than`(0)
 
             val events = receipt.listEvents(CoroutineGreeter.Modified::class.java)

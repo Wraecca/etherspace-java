@@ -25,9 +25,9 @@ class GreeterTest {
         val etherSpace = EtherSpace.build {
             client = okHttpClient
             provider = "https://rinkeby.infura.io/"
-            credentials = Credentials("0xab1e199623aa5bb2c381c349b1734e31b5be08de0486ffab68e3af4853d9980b")
+            credentials = Credentials(Tests.TEST_WALLET_KEY)
         }
-        greeter = etherSpace.create("0xa871c507184ecfaf947253e187826c1907e8dc7d", Greeter::class.java)
+        greeter = etherSpace.create(Tests.TEST_CONTRACT_ADDRESS, Greeter::class.java)
     }
 
     @Test
@@ -35,8 +35,8 @@ class GreeterTest {
         val receipt = greeter.newGreeting("Hello World")
         receipt.blockHash.length.`should equal to`(66)
         receipt.transactionHash.length.`should equal to`(66)
-        receipt.from.`should equal to`("0x39759a3c0ada2d61b6ca8eb6afc8243075307ed3")
-        receipt.to.`should equal to`("0xa871c507184ecfaf947253e187826c1907e8dc7d")
+        receipt.from.`should equal to`(Tests.TEST_WALLET_ADDRESS)
+        receipt.to.`should equal to`(Tests.TEST_CONTRACT_ADDRESS)
         receipt.logs.size.`should be greater than`(0)
 
         val events = receipt.listEvents(Greeter.Modified::class.java)
@@ -53,8 +53,8 @@ class GreeterTest {
         val receipt = greeter.newGreeting_functionName("Hello World")
         receipt.blockHash.length.`should equal to`(66)
         receipt.transactionHash.length.`should equal to`(66)
-        receipt.from.`should equal to`("0x39759a3c0ada2d61b6ca8eb6afc8243075307ed3")
-        receipt.to.`should equal to`("0xa871c507184ecfaf947253e187826c1907e8dc7d")
+        receipt.from.`should equal to`(Tests.TEST_WALLET_ADDRESS)
+        receipt.to.`should equal to`(Tests.TEST_CONTRACT_ADDRESS)
         receipt.logs.size.`should be greater than`(0)
 
         val events = receipt.listEvents(Greeter.Modified::class.java)
@@ -144,7 +144,7 @@ class GreeterTest {
 
     @Test
     fun addressType() {
-        val address = SolAddress("0xa871c507184ecfaf947253e187826c1907e8dc7d")
+        val address = SolAddress(Tests.TEST_CONTRACT_ADDRESS)
         val a = greeter.addressType(address)
         a.`should equal`(address)
     }
