@@ -1,8 +1,8 @@
-[![Release](https://jitpack.io/v/cc.etherspace.etherspace-java/Repo.svg?style=flat-square)](https://jitpack.io/#cc.etherspace.etherspace-java/Repo)
-
 # etherspace-java
 
 A Retrofit-like Ethereum client for Android, Java, and Kotlin.
+
+[![Release](https://jitpack.io/v/cc.etherspace.etherspace-java/Repo.svg?style=flat-square)](https://jitpack.io/#cc.etherspace.etherspace-java/Repo)
 
 ## Introduction
 
@@ -97,7 +97,7 @@ System.out.println(greeter.greet()); // Should be "Hello World"
 
 - [Smart Contract Interface](https://github.com/Wraecca/etherspace-java/wiki/Smart-Contract-Interface)
 
-## Configutation
+## Configuration
 
 - [Configuration](https://github.com/Wraecca/etherspace-java/wiki/Configuration)
 
@@ -145,3 +145,8 @@ System.out.println(greeter.greet()); // Should be "Hello World"
     <version>{version}</version>
   </dependency>
   ```
+  
+## Bug reports & feature requests
+
+Please submit [issues](https://github.com/Wraecca/etherspace-java/issues) or [pull requests](https://github.com/Wraecca/etherspace-java/pulls) for bugs and features, or contact me at [tempo@zaoo.com](mailto:tempo@zaoo.com).
+Any feedback is welcome!
