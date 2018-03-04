@@ -2,7 +2,7 @@
 
 A Retrofit-like Ethereum client for Android, Java, and Kotlin.
 
-[![Release](https://jitpack.io/v/cc.etherspace.etherspace-java/Repo.svg?style=flat-square)](https://jitpack.io/#cc.etherspace.etherspace-java/Repo)
+[![Release](https://jitpack.io/v/cc.etherspace.etherspace-java/etherspace-java.svg?style=flat-square)](https://jitpack.io/#cc.etherspace.etherspace-java/etherspace-java)
 
 ## Introduction
 
@@ -150,3 +150,14 @@ System.out.println(greeter.greet()); // Should be "Hello World"
 
 Please submit [issues](https://github.com/Wraecca/etherspace-java/issues) or [pull requests](https://github.com/Wraecca/etherspace-java/pulls) for bugs and features, or contact me at [tempo@zaoo.com](mailto:tempo@zaoo.com).
 Any feedback is welcome!
+
+## Credits
+
+- Etherspace is built by [Kotlin](https://kotlinlang.org/).
+- Built on top of [web3j](https://github.com/web3j/web3j).
+- Inspired by [Retrofit](http://square.github.io/retrofit/).
+- Included libraries:
+  - web3j: https://github.com/web3j/web3j
+  - kotlin-unsigned: https://github.com/kotlin-graphics/kotlin-unsigned
+  - jackson: https://github.com/FasterXML/jackson
+  - guava: https://github.com/google/guava
