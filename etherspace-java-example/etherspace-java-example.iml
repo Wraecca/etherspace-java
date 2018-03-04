@@ -52,7 +52,7 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: cc.etherspace.etherspace-java:etherspace-java:0.1.4" level="project" />
+    <orderEntry type="module" module-name="etherspace-java" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:0.21.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.web3j:infura:3.3.1" level="project" />
@@ -99,7 +99,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.ow2.asm:asm:5.0.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: com.github.jnr:jnr-x86asm:1.0.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.jetbrains:annotations:13.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: cc.etherspace.etherspace-java:etherspace-java:0.1.4" level="project" />
+    <orderEntry type="module" module-name="etherspace-java" scope="RUNTIME" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:0.21.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.web3j:infura:3.3.1" level="project" />
@@ -146,7 +146,7 @@
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.ow2.asm:asm:5.0.3" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: com.github.jnr:jnr-x86asm:1.0.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.jetbrains:annotations:13.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Gradle: cc.etherspace.etherspace-java:etherspace-java:0.1.4" level="project" />
+    <orderEntry type="module" module-name="etherspace-java" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:0.21.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.web3j:infura:3.3.1" level="project" />
