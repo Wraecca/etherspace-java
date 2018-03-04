@@ -71,7 +71,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
     // etherspace
-//    implementation 'cc.etherspace.etherspace-java:etherspace-android:0.1.2'
+//    implementation 'cc.etherspace.etherspace-java:etherspace-android:0.1.4'
     implementation project(':etherspace-android')
 
     // kotlinx-coroutines
