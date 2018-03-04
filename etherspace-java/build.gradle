@@ -1,8 +1,9 @@
 apply plugin: 'kotlin'
+apply plugin: 'maven'
 
 dependencies {
     // assertj
-    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.8.0'
+    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.9.0'
 
     // https://mvnrepository.com/artifact/com.google.guava/guava
     compile group: 'com.google.guava', name: 'guava', version: '23.6-jre'
@@ -42,8 +43,18 @@ compileKotlin {
     targetCompatibility = JavaVersion.VERSION_1_8
     kotlinOptions.jvmTarget = "1.8"
 }
+
 compileTestKotlin {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
     kotlinOptions.jvmTarget = "1.8"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
 }

@@ -2,6 +2,7 @@ apply plugin: 'kotlin'
 
 dependencies {
     // etherspace
+//    compile 'cc.etherspace.etherspace-java:etherspace-java:0.1.2'
     compile project(':etherspace-java')
 
     // kotlin
