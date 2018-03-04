@@ -43,11 +43,7 @@ public class RxJavaGreeterTest {
     public void greet_wrongFunctionName() {
         TestSubscriber<String> subscriber = new TestSubscriber<>();
         greeter.greet_wrongFunctionName().subscribe(subscriber);
-
-        subscriber.assertCompleted();
-        subscriber.assertNoErrors();
-        subscriber.assertValueCount(1);
-        assertThat(subscriber.getOnNextEvents().get(0)).isNull();
+        subscriber.assertError(IllegalArgumentException.class);
     }
 
     @Test

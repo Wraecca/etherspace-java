@@ -32,7 +32,7 @@ public class CompletableFutureGreeterTest {
         assertThat(greet).isEqualTo("Hello World");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = CompletionException.class)
     public void greet_wrongFunctionName() throws Exception {
         String greet = greeter.greet_wrongFunctionName().join();
         assertThat(greet).isEqualTo("Hello World");
