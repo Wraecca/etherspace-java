@@ -3,6 +3,7 @@
 A Retrofit-like Ethereum client for Android, Java, and Kotlin.
 
 [![Release](https://jitpack.io/v/cc.etherspace.etherspace-java/etherspace-java.svg?style=flat-square)](https://jitpack.io/#cc.etherspace.etherspace-java/etherspace-java)
+[![Build Status](https://travis-ci.org/Wraecca/etherspace-java.svg?branch=master)](https://travis-ci.org/Wraecca/etherspace-java)
 
 ## Introduction
 
