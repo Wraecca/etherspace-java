@@ -5,7 +5,7 @@ android {
     compileSdkVersion 26
 
     defaultConfig {
-        minSdkVersion 24
+        minSdkVersion 26
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -38,8 +38,9 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.guava/guava
     api 'com.google.guava:guava:24.0-android'
 
-    // kotlin-stdlib
+    // kotlin
     api "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     // etherspace
     api(project(':etherspace-java')) {
