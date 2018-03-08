@@ -1,4 +1,4 @@
-package cc.etherspace.example
+package cc.etherspace.wallet
 
 import android.app.Application
 import android.content.Context
@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 @Suppress("unused")
 @Module
-class ExampleModule(private val application: Application) {
+class WalletModule(private val application: Application) {
     @Provides
     @Singleton
     @Named("applicationContext")
@@ -41,14 +41,6 @@ class ExampleModule(private val application: Application) {
 //            callAdapters += CoroutineCallAdapter()
 //        }
     }
-
-    /**
-     * The greeter smart contract has already been deployed to this address on rinkeby.
-     */
-    @Provides
-    @Singleton
-    fun provideGreeter(etherSpace: EtherSpace): Greeter =
-            etherSpace.create("0x7c7fd86443a8a0b249080cfab29f231c31806527", Greeter::class.java)
 
     @Provides
     @Singleton
