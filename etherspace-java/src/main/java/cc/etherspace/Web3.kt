@@ -1,5 +1,7 @@
 package cc.etherspace
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonInclude
 import org.web3j.tx.Contract
 import org.web3j.tx.ManagedTransaction
 import org.web3j.utils.Numeric
@@ -51,6 +53,8 @@ interface Web3 {
         }
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     data class TransactionObject(val from: String?,
                                  val to: String,
                                  val value: BigInteger = BigInteger.ZERO,
