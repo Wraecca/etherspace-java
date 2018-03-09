@@ -6,7 +6,14 @@ This branch includes a proof-of-concept implementation of Android native wallet.
 The transaction created in DApp is passed to the wallet, and user can sign the transaction inside the wallet.
 The signed transaction is then passed back to the DApp and submitted to Ethereum node to complete the transaction.
 
-etherspace-java
+## Install and Run
+
+- Please clones the repository and opens the project with Android Studio.
+- Deploys `etherspace-android-wallet` on emulator or Android phones with Android SDK 26.
+- Deploys and launchs `etherspace-android-example` on emulator or Android phones with Android SDK 26.
+- Like the screenshots above, clicks on the read/update to interact with the Smart Contract. 
+
+# etherspace-java
 
 A Retrofit-like Ethereum client for Android, Java, and Kotlin.
 
