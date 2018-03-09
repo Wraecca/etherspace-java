@@ -1,4 +1,12 @@
-# etherspace-java
+# Android native wallet proof of concept
+
+![wallet transaction flow](https://raw.githubusercontent.com/Wraecca/etherspace-java/wallet/doc/wallet.png)
+
+This branch includes a proof-of-concept implementation of Android native wallet.
+The transaction created in DApp is passed to the wallet, and user can sign the transaction inside the wallet.
+The signed transaction is then passed back to the DApp and submitted to Ethereum node to complete the transaction.
+
+etherspace-java
 
 A Retrofit-like Ethereum client for Android, Java, and Kotlin.
 
