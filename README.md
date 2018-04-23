@@ -154,7 +154,7 @@ Any feedback is welcome!
 
 ## Credits
 
-- Etherspace is built by [Kotlin](https://kotlinlang.org/).
+- Etherspace is built with [Kotlin](https://kotlinlang.org/).
 - Built on top of [web3j](https://github.com/web3j/web3j).
 - Inspired by [Retrofit](http://square.github.io/retrofit/).
 - Included libraries:
