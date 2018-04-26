@@ -4,9 +4,8 @@ import cc.etherspace.Event
 import cc.etherspace.Web3
 import com.fasterxml.jackson.annotation.JsonValue
 import okhttp3.OkHttpClient
-import org.web3j.crypto.Credentials
-import org.web3j.crypto.RawTransaction
-import org.web3j.crypto.TransactionEncoder
+import org.bouncycastle.pqc.math.linearalgebra.ByteUtils
+import org.web3j.crypto.*
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.methods.request.Transaction
@@ -16,6 +15,8 @@ import org.web3j.protocol.http.HttpService
 import org.web3j.utils.Numeric
 import java.io.IOException
 import java.math.BigInteger
+import java.nio.ByteBuffer
+
 
 class Web3jAdapter(val web3j: Web3j) : Web3 {
     constructor(provider: String, client: OkHttpClient?) : this(createWeb3j(client, provider))
@@ -24,7 +25,49 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
 
     override val eth: Web3jEth = Web3jEth()
 
+    class Web3jAccounts : Web3.Accounts {
+        override fun sign(message: String, privateKey: String): Web3.Signature {
+            return sign(message.toByteArray(Charsets.UTF_8), privateKey)
+        }
+
+        /**
+         * from: https://github.com/EuroHsu/TestLibrary/blob/6883528dbcddb283f14955620f042b4ea3253624/src/main/java/com/example/testlibrary/cryptos/signer.java
+         */
+        override fun sign(messageHash: ByteArray, privateKey: String): Web3.Signature {
+            val prefix = "\u0019Ethereum Signed Message:\n".toByteArray(Charsets.UTF_8)
+            val prefixSize = ByteUtils.concatenate(prefix, messageHash.size.toString().toByteArray(Charsets.UTF_8))
+            val prefixMsgHash = ByteUtils.concatenate(prefixSize, messageHash)
+            val ecKeyPair = ECKeyPair.create(Numeric.toBigInt(privateKey))
+            val signatureData = Sign.signMessage(prefixMsgHash, ecKeyPair)
+            return Web3.Signature(Numeric.toHexString(Hash.sha3(prefixMsgHash)),
+                    toHexString(signatureData.v),
+                    Numeric.toHexString(signatureData.r),
+                    Numeric.toHexString(signatureData.s),
+                    Numeric.toHexString(signatureEncode(signatureData)))
+        }
+
+        private fun toHexString(byte: Byte) = String.format("0x%02x", byte)
+
+        private fun signatureEncode(signatureData: Sign.SignatureData): ByteArray {
+            assert(signatureData.r.size == 32)
+            assert(signatureData.s.size == 32)
+            assert(signatureData.v.toInt() == 27 || signatureData.v.toInt() == 28)
+            val buffer = ByteBuffer.allocate(SIGNATURE_LENGTH)
+            buffer.put(signatureData.r)
+            buffer.put(signatureData.s)
+            buffer.put(signatureData.v)
+            assert(buffer.position() == SIGNATURE_LENGTH)
+            return buffer.array()
+        }
+    }
+
     inner class Web3jEth : Web3.Eth {
+        override val accounts: Web3.Accounts = Web3jAccounts()
+
+        override fun sign(dataToSign: String, address: String): String {
+            return web3j.ethSign(address, dataToSign).send().signature
+        }
+
         @Throws(IOException::class)
         override fun getTransactionReceipt(transactionHash: String): cc.etherspace.TransactionReceipt? {
             val response = web3j.ethGetTransactionReceipt(transactionHash).send()
@@ -152,6 +195,8 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
     }
 
     companion object {
+        private const val SIGNATURE_LENGTH = 65
+
         private fun createWeb3j(client: OkHttpClient?, provider: String): Web3j {
             val httpService = if (client != null) HttpService(provider, client, false) else HttpService(provider)
             return try {
