@@ -32,14 +32,14 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    testImplementation 'junit:junit:4.12'
+    implementation "com.android.support:appcompat-v7:$android_support_version"
+    testImplementation "junit:junit:$junit_version"
 
     // https://mvnrepository.com/artifact/com.google.guava/guava
-    api 'com.google.guava:guava:24.0-android'
+    api "com.google.guava:guava:$guava_android_version"
 
     // kotlin-stdlib
-    api "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     // etherspace
     api(project(':etherspace-java')) {
@@ -49,6 +49,6 @@ dependencies {
     }
 
     // web3j
-    api 'org.web3j:core:3.3.1-android'
-    api 'org.web3j:infura:3.3.1-android'
+    api "org.web3j:core:$web3j_android_version"
+    api "org.web3j:infura:$web3j_android_version"
 }

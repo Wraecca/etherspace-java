@@ -3,7 +3,7 @@ package cc.etherspace
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.amshove.kluent.`should be greater than`
-import org.amshove.kluent.`should equal to`
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.junit.Before
 import org.junit.Test
@@ -33,17 +33,17 @@ class GreeterTest {
     @Test
     fun newGreeting() {
         val receipt = greeter.newGreeting("Hello World")
-        receipt.blockHash.length.`should equal to`(66)
-        receipt.transactionHash.length.`should equal to`(66)
-        receipt.from!!.`should equal to`(Tests.TEST_WALLET_ADDRESS)
-        receipt.to!!.`should equal to`(Tests.TEST_CONTRACT_ADDRESS)
+        receipt.blockHash.length.`should be equal to`(66)
+        receipt.transactionHash.length.`should be equal to`(66)
+        receipt.from!!.`should be equal to`(Tests.TEST_WALLET_ADDRESS)
+        receipt.to!!.`should be equal to`(Tests.TEST_CONTRACT_ADDRESS)
         receipt.logs.size.`should be greater than`(0)
 
         val events = receipt.listEvents(Greeter.Modified::class.java)
-        events.size.`should equal to`(1)
-        events[0].event.`should equal to`("Modified")
-        events[0].returnValue.oldGreeting.`should equal to`("Hello World")
-        events[0].returnValue.newGreeting.`should equal to`("Hello World")
+        events.size.`should be equal to`(1)
+        events[0].event.`should be equal to`("Modified")
+        events[0].returnValue.oldGreeting.`should be equal to`("Hello World")
+        events[0].returnValue.newGreeting.`should be equal to`("Hello World")
         events[0].returnValue.oldGreetingIdx.`should equal`(SolBytes32(Numeric.hexStringToByteArray("0x592fa743889fc7f92ac2a37bb1f5ba1daf2a5c84741ca0e0061d243a2e6707ba")))
         events[0].returnValue.newGreetingIdx.`should equal`(SolBytes32(Numeric.hexStringToByteArray("0x592fa743889fc7f92ac2a37bb1f5ba1daf2a5c84741ca0e0061d243a2e6707ba")))
     }
@@ -51,17 +51,17 @@ class GreeterTest {
     @Test
     fun newGreeting_functionName() {
         val receipt = greeter.newGreeting_functionName("Hello World")
-        receipt.blockHash.length.`should equal to`(66)
-        receipt.transactionHash.length.`should equal to`(66)
-        receipt.from!!.`should equal to`(Tests.TEST_WALLET_ADDRESS)
-        receipt.to!!.`should equal to`(Tests.TEST_CONTRACT_ADDRESS)
+        receipt.blockHash.length.`should be equal to`(66)
+        receipt.transactionHash.length.`should be equal to`(66)
+        receipt.from!!.`should be equal to`(Tests.TEST_WALLET_ADDRESS)
+        receipt.to!!.`should be equal to`(Tests.TEST_CONTRACT_ADDRESS)
         receipt.logs.size.`should be greater than`(0)
 
         val events = receipt.listEvents(Greeter.Modified::class.java)
-        events.size.`should equal to`(1)
-        events[0].event.`should equal to`("Modified")
-        events[0].returnValue.oldGreeting.`should equal to`("Hello World")
-        events[0].returnValue.newGreeting.`should equal to`("Hello World")
+        events.size.`should be equal to`(1)
+        events[0].event.`should be equal to`("Modified")
+        events[0].returnValue.oldGreeting.`should be equal to`("Hello World")
+        events[0].returnValue.newGreeting.`should be equal to`("Hello World")
         events[0].returnValue.oldGreetingIdx.`should equal`(SolBytes32(Numeric.hexStringToByteArray("0x592fa743889fc7f92ac2a37bb1f5ba1daf2a5c84741ca0e0061d243a2e6707ba")))
         events[0].returnValue.newGreetingIdx.`should equal`(SolBytes32(Numeric.hexStringToByteArray("0x592fa743889fc7f92ac2a37bb1f5ba1daf2a5c84741ca0e0061d243a2e6707ba")))
     }
@@ -70,30 +70,30 @@ class GreeterTest {
     fun newGreeting_options() {
         val transactionHash = greeter.newGreeting("Hello World",
                 Options(gas = BigInteger.valueOf(44_000_000_000L)))
-        transactionHash.length.`should equal to`(66)
+        transactionHash.length.`should be equal to`(66)
     }
 
     @Test
     fun greet() {
         val greet = greeter.greet()
-        greet.`should equal to`("Hello World")
+        greet.`should be equal to`("Hello World")
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun greet_wrongFunctionName() {
         val greet = greeter.greet_wrongFunctionName()
-        greet.`should equal to`("Hello World")
+        greet.`should be equal to`("Hello World")
     }
 
     @Test
     fun greet_functionName() {
         val greet = greeter.greet_functionName()
-        greet.`should equal to`("Hello World")
+        greet.`should be equal to`("Hello World")
     }
 
     fun newPersonalGreeting() {
         val transactionHash = greeter.newPersonalGreeting("tempo", "Hello World")
-        transactionHash.length.`should equal to`(66)
+        transactionHash.length.`should be equal to`(66)
     }
 
     @Test
@@ -106,22 +106,22 @@ class GreeterTest {
     @Test
     fun multipleReturns() {
         val ret = greeter.multipleReturns()
-        ret.first.`should equal to`("1")
-        ret.second.`should equal to`("2")
-        ret.third.`should equal to`("3")
-        ret.fourth.`should equal to`("4")
-        ret.fifth.`should equal to`("5")
-        ret.sixth.`should equal to`("6")
-        ret.seventh.`should equal to`("7")
+        ret.first.`should be equal to`("1")
+        ret.second.`should be equal to`("2")
+        ret.third.`should be equal to`("3")
+        ret.fourth.`should be equal to`("4")
+        ret.fifth.`should be equal to`("5")
+        ret.sixth.`should be equal to`("6")
+        ret.seventh.`should be equal to`("7")
     }
 
     @Test
     fun boolType() {
         var b = greeter.boolType(true)
-        b.`should equal to`(true)
+        b.`should be equal to`(true)
 
         b = greeter.boolType(false)
-        b.`should equal to`(false)
+        b.`should be equal to`(false)
     }
 
     @Test
@@ -159,7 +159,7 @@ class GreeterTest {
     @Test
     fun byteType() {
         val i = greeter.byteType(10)
-        i.`should equal to`(10)
+        i.`should be equal to`(10)
     }
 
     @Test

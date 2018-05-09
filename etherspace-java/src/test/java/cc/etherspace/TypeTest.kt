@@ -1,8 +1,8 @@
 package cc.etherspace
 
 import com.google.common.reflect.TypeToken
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be true`
-import org.amshove.kluent.`should equal to`
 import org.amshove.kluent.`should equal`
 import org.junit.Test
 import java.lang.reflect.ParameterizedType
@@ -17,7 +17,7 @@ import kotlin.test.assertTrue
 class TypeTest {
     fun listTypes() {
         val method = TestClass::class.java.methods.first { it.name == "test1" }
-        method.genericParameterTypes.size.`should equal to`(3)
+        method.genericParameterTypes.size.`should be equal to`(3)
 
         var type = method.genericParameterTypes[0]
         assertFalse { type is ParameterizedType }
@@ -40,7 +40,7 @@ class TypeTest {
     @Test
     fun listTypeTokens() {
         val method = TestClass::class.java.methods.first { it.name == "test1" }
-        method.genericParameterTypes.size.`should equal to`(3)
+        method.genericParameterTypes.size.`should be equal to`(3)
 
         var token = TypeToken.of(method.genericParameterTypes[0])
         token.rawType.`should equal`(String::class.java)
@@ -61,7 +61,7 @@ class TypeTest {
     @Test
     fun listTypeTokens_return() {
         val method = TestClass::class.java.methods.first { it.name == "test1" }
-        method.genericParameterTypes.size.`should equal to`(3)
+        method.genericParameterTypes.size.`should be equal to`(3)
 
         var token = TypeToken.of(method.genericReturnType)
         token.rawType.`should equal`(Triple::class.java)
@@ -86,7 +86,7 @@ class TypeTest {
     @Test
     fun listTypeTokens_array() {
         val method = TestClass::class.java.methods.first { it.name == "test2" }
-        method.genericParameterTypes.size.`should equal to`(3)
+        method.genericParameterTypes.size.`should be equal to`(3)
 
         var token = TypeToken.of(method.genericParameterTypes[0])
         token.rawType.`should equal`(String::class.java)
@@ -107,7 +107,7 @@ class TypeTest {
     @Test
     fun listTypeTokens_arrayReturn() {
         val method = TestClass::class.java.methods.first { it.name == "test2" }
-        method.genericParameterTypes.size.`should equal to`(3)
+        method.genericParameterTypes.size.`should be equal to`(3)
 
         var token = TypeToken.of(method.genericReturnType)
         token.rawType.`should equal`(Triple::class.java)
@@ -132,16 +132,16 @@ class TypeTest {
     @Test
     fun kotlinTypes_return() {
         val arguments = TestClass::test1.returnType.arguments
-        arguments.size.`should equal to`(3)
+        arguments.size.`should be equal to`(3)
         arguments[0].type.`should equal`(String::class.createType())
 
         arguments[1].type.`should equal`(List::class.createType(listOf(KTypeProjection.invariant(String::class.starProjectedType))))
         arguments[1].type!!.jvmErasure.java.`should equal`(List::class.java)
-        arguments[1].type!!.arguments.size.`should equal to`(1)
+        arguments[1].type!!.arguments.size.`should be equal to`(1)
         arguments[1].type!!.arguments[0].type.`should equal`(String::class.createType())
         arguments[1].type!!.arguments[0].type!!.jvmErasure.java.`should equal`(String::class.java)
 
-        arguments[2].type!!.arguments.size.`should equal to`(1)
+        arguments[2].type!!.arguments.size.`should be equal to`(1)
         arguments[2].type!!.arguments[0].type!!.arguments[0].type.`should equal`(String::class.createType())
     }
 

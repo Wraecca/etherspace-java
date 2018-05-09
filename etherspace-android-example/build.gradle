@@ -35,10 +35,10 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
-    testImplementation 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.android.support:appcompat-v7:$android_support_version"
+    implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
+    testImplementation "junit:junit:$junit_version"
 
     // Anko Commons
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
@@ -70,8 +70,8 @@ dependencies {
     implementation project(':etherspace-android')
 
     // kotlinx-coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.21.2'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_coroutines_version"
 
     // threeten
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.0.5'
+    implementation "com.jakewharton.threetenabp:threetenabp:$threetenabp_version"
 }
