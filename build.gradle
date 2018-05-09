@@ -8,6 +8,7 @@ buildscript {
         jcenter()
         mavenCentral()
     }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -17,7 +18,7 @@ buildscript {
 
 allprojects {
     repositories {
-        google()
+        maven { url "https://maven.google.com" }
         jcenter()
         mavenCentral()
         maven { url 'https://jitpack.io' }
