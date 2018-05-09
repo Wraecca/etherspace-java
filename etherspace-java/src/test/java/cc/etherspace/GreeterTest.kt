@@ -35,8 +35,8 @@ class GreeterTest {
         val receipt = greeter.newGreeting("Hello World")
         receipt.blockHash.length.`should equal to`(66)
         receipt.transactionHash.length.`should equal to`(66)
-        receipt.from.`should equal to`(Tests.TEST_WALLET_ADDRESS)
-        receipt.to.`should equal to`(Tests.TEST_CONTRACT_ADDRESS)
+        receipt.from!!.`should equal to`(Tests.TEST_WALLET_ADDRESS)
+        receipt.to!!.`should equal to`(Tests.TEST_CONTRACT_ADDRESS)
         receipt.logs.size.`should be greater than`(0)
 
         val events = receipt.listEvents(Greeter.Modified::class.java)
@@ -53,8 +53,8 @@ class GreeterTest {
         val receipt = greeter.newGreeting_functionName("Hello World")
         receipt.blockHash.length.`should equal to`(66)
         receipt.transactionHash.length.`should equal to`(66)
-        receipt.from.`should equal to`(Tests.TEST_WALLET_ADDRESS)
-        receipt.to.`should equal to`(Tests.TEST_CONTRACT_ADDRESS)
+        receipt.from!!.`should equal to`(Tests.TEST_WALLET_ADDRESS)
+        receipt.to!!.`should equal to`(Tests.TEST_CONTRACT_ADDRESS)
         receipt.logs.size.`should be greater than`(0)
 
         val events = receipt.listEvents(Greeter.Modified::class.java)
