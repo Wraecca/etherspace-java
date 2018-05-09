@@ -29,10 +29,4 @@ android:
     - extra-android-support
 
   licenses:
-    - android-sdk-preview-license-.+
-    - android-sdk-license-.+
-    - google-gdk-license-.+
-
-  before_install:
-    - yes | sdkmanager "platforms;android-27"
-    - chmod +x gradlew
+    - '.+'
