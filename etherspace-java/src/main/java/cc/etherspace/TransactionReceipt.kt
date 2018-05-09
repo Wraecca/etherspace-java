@@ -14,6 +14,9 @@ interface TransactionReceipt {
     val gasUsed: BigInteger
     val logs: List<Log>
     fun <T> listEvents(clazz: Class<T>): List<Event<T>>
+    // status is only present on Byzantium transactions onwards
+    // see EIP 658 https://github.com/ethereum/EIPs/pull/658
+    val status: String?
 }
 
 data class Log(val address: String,

@@ -90,6 +90,7 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
                     cumulativeGasUsed,
                     gasUsed,
                     logs.map { it.toWeb3Log() },
+                    status,
                     abi)
         }
 
@@ -179,6 +180,7 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
                                       override val cumulativeGasUsed: BigInteger,
                                       override val gasUsed: BigInteger,
                                       override val logs: List<cc.etherspace.Log>,
+                                      override val status: String?,
                                       private val abi: Web3.Abi) : cc.etherspace.TransactionReceipt {
         override fun <T> listEvents(clazz: Class<T>): List<Event<T>> {
             val signature = abi.encodeEventSignature(clazz)
