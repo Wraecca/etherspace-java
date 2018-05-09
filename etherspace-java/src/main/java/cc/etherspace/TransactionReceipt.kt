@@ -7,8 +7,8 @@ interface TransactionReceipt {
     val blockNumber: BigInteger
     val transactionHash: String
     val transactionIndex: BigInteger
-    val from: String
-    val to: String
+    val from: String?
+    val to: String?
     val contractAddress: String?
     val cumulativeGasUsed: BigInteger
     val gasUsed: BigInteger
