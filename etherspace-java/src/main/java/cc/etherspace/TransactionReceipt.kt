@@ -17,6 +17,7 @@ interface TransactionReceipt {
     // status is only present on Byzantium transactions onwards
     // see EIP 658 https://github.com/ethereum/EIPs/pull/658
     val status: String?
+    val success: Boolean
 }
 
 data class Log(val address: String,

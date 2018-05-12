@@ -182,6 +182,14 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
                                       override val logs: List<cc.etherspace.Log>,
                                       override val status: String?,
                                       private val abi: Web3.Abi) : cc.etherspace.TransactionReceipt {
+        override val success: Boolean
+            get() {
+                if (status != null) {
+                    if (Numeric.toBigInt(status) == BigInteger.ZERO) return true
+                }
+                return false
+            }
+
         override fun <T> listEvents(clazz: Class<T>): List<Event<T>> {
             val signature = abi.encodeEventSignature(clazz)
             return logs.mapNotNull { log ->
