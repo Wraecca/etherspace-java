@@ -185,7 +185,7 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
         override val success: Boolean
             get() {
                 if (status != null) {
-                    if (Numeric.toBigInt(status) == BigInteger.ZERO) return true
+                    if (Numeric.toBigInt(status) == BigInteger.ONE) return true
                 }
                 return false
             }
