@@ -19,7 +19,8 @@ class EtherSpace(val web3: Web3,
     fun <T> create(toAddress: String, service: Class<T>): T {
         val defaultOptionsFromClasses = createOptionsFromAnnotation(service)
         return Proxy.newProxyInstance(service.classLoader, arrayOf(service)) { _, method, args ->
-            invokeFunction(toAddress, method, args?.toList() ?: emptyList(), defaultOptionsFromClasses)
+            invokeFunction(toAddress, method, args?.toList()
+                    ?: emptyList(), defaultOptionsFromClasses)
         } as T
     }
 
@@ -72,10 +73,11 @@ class EtherSpace(val web3: Web3,
                                           args: List<Any>,
                                           returnType: Type,
                                           options: Options): Any {
-        val cd = options.credentials ?: credentials ?: throw IllegalArgumentException("Credentials not set")
+        val cd = options.credentials ?: credentials
+        ?: throw IllegalArgumentException("Credentials not set")
         val encodedFunction = web3.abi.encodeFunctionCall(args, functionName)
         // TODO Better way to get a nonce?
-        val nonce = web3.eth.getTransactionCount(cd.address)
+        val nonce = web3.eth.getTransactionCount(cd.address, Web3.DefaultBlock.PENDING)
         val transactionObject = Web3.TransactionObject(cd.address,
                 toAddress,
                 encodedFunction,
