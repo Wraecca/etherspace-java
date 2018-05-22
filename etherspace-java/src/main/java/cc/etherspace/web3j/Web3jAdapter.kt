@@ -168,6 +168,14 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
                 }
             }
         }
+
+        override fun getBalance(address: String, defaultBlock: Web3.DefaultBlock): BigInteger {
+            val response = web3j.ethGetBalance(address, defaultBlock.toDefaultBlockParameter()).send()
+            if (response.hasError()) {
+                throw IOException("Error processing request: " + response.error.message)
+            }
+            return response.balance
+        }
     }
 
     data class TransactionReceiptImpl(override val blockHash: String,

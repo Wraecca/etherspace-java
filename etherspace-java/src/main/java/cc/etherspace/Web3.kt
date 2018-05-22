@@ -44,6 +44,9 @@ interface Web3 {
 
         @Throws(IOException::class)
         fun getTransactionReceipt(transactionHash: String): TransactionReceipt?
+
+        @Throws(IOException::class)
+        fun getBalance(address: String, defaultBlock: DefaultBlock = DefaultBlock.LATEST): BigInteger
     }
 
     interface Accounts {
