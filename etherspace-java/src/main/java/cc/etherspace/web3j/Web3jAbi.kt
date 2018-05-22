@@ -11,6 +11,7 @@ import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.Event
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.*
+import org.web3j.crypto.Keys
 import unsigned.*
 import java.lang.reflect.Constructor
 import java.math.BigInteger
@@ -89,7 +90,7 @@ class Web3jAbi : Web3.Abi {
             is unsigned.Uint -> Uint32(value.toBigInt())
             is unsigned.Ulong -> Uint64(value.toBigInt())
             is SolNumber -> value.toWeb3jValue()
-            is SolAddress -> Address(value.address)
+            is SolAddress -> Address(Keys.toChecksumAddress(value.address))
             is Byte -> Bytes1(byteArrayOf(value))
             is SolBytes -> value.toWeb3jValue()
             is ByteArray -> DynamicBytes(value)
@@ -143,7 +144,7 @@ class Web3jAbi : Web3.Abi {
             is Uint32 -> value.value.toUint()
             is Uint16 -> value.value.toUshort()
             is NumericType -> value.toSolValue()
-            is Address -> SolAddress(value.value)
+            is Address -> SolAddress(Keys.toChecksumAddress(value.value))
             is Bytes1 -> value.value[0]
             is Bytes -> value.toSolValue()
             is DynamicBytes -> value.value
