@@ -34,7 +34,8 @@ class Credentials {
     private fun toAddress(privateKey: String): String =
             toAddress(Sign.publicKeyFromPrivate(Numeric.toBigInt(privateKey)))
 
-    private fun toAddress(publicKey: BigInteger): String = Numeric.prependHexPrefix(Keys.getAddress(publicKey))
+    private fun toAddress(publicKey: BigInteger): String =
+            Keys.toChecksumAddress(Numeric.prependHexPrefix(Keys.getAddress(publicKey)))
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
