@@ -15,11 +15,14 @@ import java.lang.reflect.Type
 class EtherSpace(val web3: Web3,
                  val credentials: Credentials?,
                  private val callAdapters: List<CallAdapter<Any, Any>>) {
+
+    fun <T> create(contract: SolAddress, service: Class<T>): T = create(contract.address, service)
+
     @Suppress("UNCHECKED_CAST")
-    fun <T> create(toAddress: String, service: Class<T>): T {
+    fun <T> create(contractAddress: String, service: Class<T>): T {
         val defaultOptionsFromClasses = createOptionsFromAnnotation(service)
         return Proxy.newProxyInstance(service.classLoader, arrayOf(service)) { _, method, args ->
-            invokeFunction(toAddress, method, args?.toList()
+            invokeFunction(contractAddress, method, args?.toList()
                     ?: emptyList(), defaultOptionsFromClasses)
         } as T
     }
