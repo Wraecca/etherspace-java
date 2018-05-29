@@ -2,6 +2,7 @@
 
 package cc.etherspace
 
+import org.web3j.utils.Numeric
 import java.math.BigInteger
 import java.util.*
 
@@ -24,6 +25,10 @@ sealed class SolNumber(val value: BigInteger, val bits: Int, val unsigned: Boole
         var result = value.hashCode()
         result = 31 * result + bits
         return result
+    }
+
+    override fun toString(): String {
+        return "SolNumber(value=$value, bits=$bits, unsigned=$unsigned)"
     }
 }
 
@@ -344,6 +349,10 @@ sealed class SolBytes(val value: ByteArray, val size: Int) : SolType {
         result = 31 * result + size
         return result
     }
+
+    override fun toString(): String {
+        return "SolBytes(value=${Numeric.toHexString(value)}, size=$size)"
+    }
 }
 
 class SolBytes2(value: ByteArray) : SolBytes(value, 2)
@@ -394,6 +403,10 @@ sealed class SolFixedArray<T>(val value: Array<T>) : SolType {
 
     override fun hashCode(): Int {
         return Arrays.hashCode(value)
+    }
+
+    override fun toString(): String {
+        return "SolFixedArray(value=${Arrays.toString(value)})"
     }
 }
 
