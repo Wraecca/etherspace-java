@@ -41,10 +41,14 @@ dependencies {
     // kotlin-stdlib
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+    // kotlinx-coroutines
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_coroutines_version"
+
     // etherspace
     api(project(':etherspace-java')) {
         exclude group: 'com.google.guava'
         exclude group: 'org.jetbrains.kotlin'
+        exclude group: 'org.jetbrains.kotlinx'
         exclude group: 'org.web3j'
     }
 

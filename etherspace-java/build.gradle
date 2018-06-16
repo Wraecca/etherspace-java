@@ -3,7 +3,7 @@ apply plugin: 'maven'
 
 dependencies {
     // assertj
-    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.9.1'
+    testCompile group: 'org.assertj', name: 'assertj-core', version: "$assertj_version"
 
     // https://mvnrepository.com/artifact/com.google.guava/guava
     compile group: 'com.google.guava', name: 'guava', version: "$guava_version"
@@ -28,7 +28,7 @@ dependencies {
     compile "com.github.kotlin-graphics:kotlin-unsigned:$kotlin_unsigned_version"
 
     // https://mvnrepository.com/artifact/org.mockito/mockito-inline
-    testCompile group: 'org.mockito', name: 'mockito-inline', version: "$mockito_version"
+    testCompile group: 'org.mockito', name: 'mockito-inline', version: "$mockito_inline_version"
 
     // https://mvnrepository.com/artifact/io.reactivex/rxjava
     compile group: 'io.reactivex', name: 'rxjava', version: "$rxjava_version"
