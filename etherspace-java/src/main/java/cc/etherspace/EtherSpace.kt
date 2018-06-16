@@ -11,10 +11,12 @@ import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 import java.lang.reflect.Type
+import java.math.BigInteger
 
 class EtherSpace(val web3: Web3,
                  val credentials: Credentials?,
-                 private val callAdapters: List<CallAdapter<Any, Any>>) {
+                 private val callAdapters: List<CallAdapter<Any, Any>>,
+                 private val nonceProvider: NonceProvider) {
 
     fun <T> create(contract: SolAddress, service: Class<T>): T = create(contract.address, service)
 
@@ -78,9 +80,10 @@ class EtherSpace(val web3: Web3,
                                           options: Options): Any {
         val cd = options.credentials ?: credentials
         ?: throw IllegalArgumentException("Credentials not set")
+        val np = options.nonceProvider ?: nonceProvider
+
         val encodedFunction = web3.abi.encodeFunctionCall(args, functionName)
-        // TODO Better way to get a nonce?
-        val nonce = web3.eth.getTransactionCount(cd.address, Web3.DefaultBlock.PENDING)
+        val nonce = np.getNonce(web3, cd.address)
         val transactionObject = Web3.TransactionObject(cd.address,
                 toAddress,
                 encodedFunction,
@@ -130,6 +133,8 @@ class EtherSpace(val web3: Web3,
 
         var client: OkHttpClient? = null
 
+        var nonceProvider: NonceProvider = TransactionCountNonceProvider
+
         fun provider(provider: String) = apply { this.provider = provider }
 
         fun credentials(credentials: Credentials) = apply { this.credentials = credentials }
@@ -142,7 +147,14 @@ class EtherSpace(val web3: Web3,
             val web3 = Web3jAdapter(provider, client)
             return EtherSpace(web3,
                     credentials,
-                    callAdapters + PassThroughCallAdaptor())
+                    callAdapters + PassThroughCallAdaptor(),
+                    nonceProvider)
+        }
+    }
+
+    object TransactionCountNonceProvider : NonceProvider {
+        override fun getNonce(web3: Web3, address: String): BigInteger {
+            return web3.eth.getTransactionCount(address, Web3.DefaultBlock.PENDING)
         }
     }
 

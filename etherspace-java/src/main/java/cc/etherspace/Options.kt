@@ -10,4 +10,5 @@ import java.math.BigInteger
 data class Options @JvmOverloads constructor(val value: BigInteger = BigInteger.ZERO,
                                              val gas: BigInteger = Contract.GAS_LIMIT,
                                              val gasPrice: BigInteger = ManagedTransaction.GAS_PRICE,
-                                             val credentials: Credentials? = null)
+                                             val credentials: Credentials? = null,
+                                             val nonceProvider: NonceProvider? = null)
