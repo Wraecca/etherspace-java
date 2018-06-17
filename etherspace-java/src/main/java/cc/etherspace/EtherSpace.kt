@@ -4,6 +4,7 @@ import cc.etherspace.calladapter.CallAdapter
 import cc.etherspace.calladapter.PassThroughCallAdaptor
 import cc.etherspace.web3j.Web3jAdapter
 import com.google.common.reflect.TypeToken
+import kotlinx.coroutines.experimental.runBlocking
 import okhttp3.OkHttpClient
 import java.io.IOException
 import java.lang.Thread.sleep
@@ -72,7 +73,7 @@ class EtherSpace(val web3: Web3,
                         gasPrice = it.gasPrice.toBigInteger())
             } ?: defaultOptions
 
-    @Throws(IOException::class)
+    @Throws(IOException::class, TransactionFailedException::class)
     private fun invokeTransactionFunction(toAddress: String,
                                           functionName: String,
                                           args: List<Any>,
@@ -91,17 +92,15 @@ class EtherSpace(val web3: Web3,
                 nonce)
         val transactionHash = web3.eth.sendTransaction(transactionObject, cd)
         val returnTypeToken = TypeToken.of(returnType)
-        when {
-            returnTypeToken.isSubtypeOf(String::class.java) -> return transactionHash
+        return when {
+            returnTypeToken.isSubtypeOf(String::class.java) -> transactionHash
             returnTypeToken.isSubtypeOf(TransactionReceipt::class.java) -> {
-                for (i in 1..GET_TRANSACTION_RECEIPT_POLLING_ATTEMPTS) {
-                    val transactionReceipt = web3.eth.getTransactionReceipt(transactionHash)
-                    if (transactionReceipt != null) {
-                        return transactionReceipt
-                    }
-                    sleep(GET_TRANSACTION_RECEIPT_POLLING_INTERVAL_IN_MS)
+                runBlocking {
+                    TransactionHash(web3, transactionHash).requestTransactionReceipt()
                 }
-                throw IOException("Unable to get transaction receipt because of timeout.")
+            }
+            returnTypeToken.isSubtypeOf(TransactionHash::class.java) -> {
+                TransactionHash(web3, transactionHash)
             }
             else -> throw IllegalArgumentException("Unknown return type:${returnType.typeName}")
         }
@@ -160,7 +159,7 @@ class EtherSpace(val web3: Web3,
 
     companion object {
         inline fun build(block: Builder.() -> Unit) = Builder().apply(block).build()
-        private const val GET_TRANSACTION_RECEIPT_POLLING_INTERVAL_IN_MS = 5_000L
-        private const val GET_TRANSACTION_RECEIPT_POLLING_ATTEMPTS = 60
+        internal const val GET_TRANSACTION_RECEIPT_POLLING_INTERVAL_IN_MS = 5_000L
+        internal const val GET_TRANSACTION_RECEIPT_POLLING_ATTEMPTS = 60
     }
 }

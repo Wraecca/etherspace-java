@@ -14,6 +14,10 @@ interface Greeter {
 
     @Throws(IOException::class)
     @Send
+    fun newGreeting_transactionHash(greeting: String): TransactionHash
+
+    @Throws(IOException::class)
+    @Send
     fun newGreeting(greeting: String, options: Options): String
 
     @Throws(IOException::class)

@@ -2,8 +2,8 @@ package cc.etherspace
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.amshove.kluent.`should be greater than`
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should be greater than`
 import org.amshove.kluent.`should equal`
 import org.junit.Before
 import org.junit.Test
@@ -71,6 +71,12 @@ class GreeterTest {
         val transactionHash = greeter.newGreeting("Hello World",
                 Options(gas = BigInteger.valueOf(44_000_000_000L)))
         transactionHash.length.`should be equal to`(66)
+    }
+
+    @Test
+    fun newGreeting_transactionHash() {
+        val transactionHash = greeter.newGreeting_transactionHash("Hello World")
+        transactionHash.hash.length.`should be equal to`(66)
     }
 
     @Test
