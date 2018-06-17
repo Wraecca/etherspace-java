@@ -1,6 +1,5 @@
 package cc.etherspace
 
-import cc.etherspace.EtherSpace.Companion.GET_TRANSACTION_RECEIPT_POLLING_ATTEMPTS
 import kotlinx.coroutines.experimental.delay
 import java.io.IOException
 
@@ -13,8 +12,12 @@ data class TransactionHash(private val web3: Web3,
                 if (!transactionReceipt.success) throw TransactionFailedException(transactionReceipt)
                 return transactionReceipt
             }
-            delay(GET_TRANSACTION_RECEIPT_POLLING_ATTEMPTS)
+            delay(EtherSpace.GET_TRANSACTION_RECEIPT_POLLING_INTERVAL_IN_MS)
         }
         throw IOException("transactionTimeout:transactionHash=$this")
+    }
+
+    override fun toString(): String {
+        return "TransactionHash(hash='$hash')"
     }
 }
