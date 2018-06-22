@@ -1,14 +1,24 @@
 package cc.etherspace.calladapter;
 
-import cc.etherspace.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.web3j.utils.Numeric;
-import rx.observers.TestSubscriber;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
+
+import cc.etherspace.Credentials;
+import cc.etherspace.EtherSpace;
+import cc.etherspace.Event;
+import cc.etherspace.JavaGreeter;
+import cc.etherspace.Options;
+import cc.etherspace.SolBytes32;
+import cc.etherspace.Tests;
+import cc.etherspace.TransactionHash;
+import cc.etherspace.TransactionReceipt;
+import rx.Observable;
+import rx.observers.TestSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -76,5 +86,31 @@ public class RxJavaGreeterTest {
         TestSubscriber<TransactionReceipt> subscriber = new TestSubscriber<>();
         greeter.newGreeting("Hello World", new Options(BigInteger.ZERO, BigInteger.valueOf(44_000_000_000L))).subscribe(subscriber);
         subscriber.assertError(IOException.class);
+    }
+
+
+    @Test
+    public void newGreeting_transactionHash() {
+        TestSubscriber<TransactionHash> s1 = new TestSubscriber<>();
+        greeter.newGreeting_transactionHash("Hello World").subscribe(s1);
+
+        s1.assertCompleted();
+        s1.assertNoErrors();
+        s1.assertValueCount(1);
+        TransactionHash hash = s1.getOnNextEvents().get(0);
+        assertThat(hash.getHash().length()).isEqualTo(66);
+
+        TestSubscriber<TransactionReceipt> s2 = new TestSubscriber<>();
+        hash.<Observable<TransactionReceipt>>requestTransactionReceipt().subscribe(s2);
+
+        s2.assertCompleted();
+        s2.assertNoErrors();
+        s2.assertValueCount(1);
+        TransactionReceipt receipt = s2.getOnNextEvents().get(0);
+        assertThat(receipt.getBlockHash().length()).isEqualTo(66);
+        assertThat(receipt.getTransactionHash().length()).isEqualTo(66);
+        assertThat(receipt.getFrom()).isEqualTo(Tests.TEST_WALLET_ADDRESS);
+        assertThat(receipt.getTo()).isEqualTo(Tests.TEST_CONTRACT_ADDRESS);
+        assertThat(receipt.getLogs().size()).isGreaterThan(0);
     }
 }

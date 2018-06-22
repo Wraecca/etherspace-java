@@ -13,6 +13,9 @@ public interface CompletableFutureGreeter {
     @Send
     CompletableFuture<TransactionReceipt> newGreeting(String greeting, Options options) throws IOException;
 
+    @Send(functionName = "newGreeting")
+    CompletableFuture<TransactionHash> newGreeting_transactionHash(String greeting) throws IOException;
+
     @Call
     CompletableFuture<String> greet() throws IOException;
 

@@ -57,4 +57,17 @@ public class JavaGreeterTest {
     public void newGreeting_options() throws Exception {
         greeter.newGreeting("Hello World", new Options(BigInteger.ZERO, BigInteger.valueOf(44_000_000_000L)));
     }
+
+    @Test
+    public void newGreeting_transactionHash() {
+        TransactionHash hash = greeter.newGreeting_transactionHash("Hello World");
+        assertThat(hash.getHash().length()).isEqualTo(66);
+
+        TransactionReceipt receipt = hash.requestTransactionReceipt();
+        assertThat(receipt.getBlockHash().length()).isEqualTo(66);
+        assertThat(receipt.getTransactionHash().length()).isEqualTo(66);
+        assertThat(receipt.getFrom()).isEqualTo(Tests.TEST_WALLET_ADDRESS);
+        assertThat(receipt.getTo()).isEqualTo(Tests.TEST_CONTRACT_ADDRESS);
+        assertThat(receipt.getLogs().size()).isGreaterThan(0);
+    }
 }

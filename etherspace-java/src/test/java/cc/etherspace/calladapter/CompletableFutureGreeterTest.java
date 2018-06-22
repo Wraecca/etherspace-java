@@ -1,13 +1,23 @@
 package cc.etherspace.calladapter;
 
-import cc.etherspace.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+
+import cc.etherspace.Credentials;
+import cc.etherspace.EtherSpace;
+import cc.etherspace.Event;
+import cc.etherspace.JavaGreeter;
+import cc.etherspace.Options;
+import cc.etherspace.SolBytes32;
+import cc.etherspace.Tests;
+import cc.etherspace.TransactionHash;
+import cc.etherspace.TransactionReceipt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,5 +70,18 @@ public class CompletableFutureGreeterTest {
     public void newGreeting_options() throws Exception {
         TransactionReceipt receipt = greeter.newGreeting("Hello World", new Options(BigInteger.ZERO, BigInteger.valueOf(44_000_000_000L))).join();
         assertThat(receipt.getTransactionHash().length()).isEqualTo(66);
+    }
+
+    @Test
+    public void newGreeting_transactionHash() throws Exception {
+        TransactionHash hash = greeter.newGreeting_transactionHash("Hello World").join();
+        assertThat(hash.getHash().length()).isEqualTo(66);
+        TransactionReceipt receipt = hash.<CompletableFuture<TransactionReceipt>>requestTransactionReceipt().join();
+
+        assertThat(receipt.getBlockHash().length()).isEqualTo(66);
+        assertThat(receipt.getTransactionHash().length()).isEqualTo(66);
+        assertThat(receipt.getFrom()).isEqualTo(Tests.TEST_WALLET_ADDRESS);
+        assertThat(receipt.getTo()).isEqualTo(Tests.TEST_CONTRACT_ADDRESS);
+        assertThat(receipt.getLogs().size()).isGreaterThan(0);
     }
 }

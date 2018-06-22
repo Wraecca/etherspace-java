@@ -75,8 +75,15 @@ class GreeterTest {
 
     @Test
     fun newGreeting_transactionHash() {
-        val transactionHash = greeter.newGreeting_transactionHash("Hello World")
-        transactionHash.hash.length.`should be equal to`(66)
+        val hash = greeter.newGreeting_transactionHash("Hello World")
+        hash.hash.length.`should be equal to`(66)
+
+        val receipt = hash.requestTransactionReceipt<TransactionReceipt>()
+        receipt.blockHash.length.`should be equal to`(66)
+        receipt.transactionHash.length.`should be equal to`(66)
+        receipt.from!!.`should be equal to`(Tests.TEST_WALLET_ADDRESS)
+        receipt.to!!.`should be equal to`(Tests.TEST_CONTRACT_ADDRESS)
+        receipt.logs.size.`should be greater than`(0)
     }
 
     @Test

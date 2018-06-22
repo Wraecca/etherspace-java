@@ -10,6 +10,9 @@ public interface JavaGreeter {
     @Send
     TransactionReceipt newGreeting(String greeting, Options options) throws IOException;
 
+    @Send(functionName = "newGreeting")
+    TransactionHash newGreeting_transactionHash(String greeting);
+
     @Call
     String greet();
 

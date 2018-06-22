@@ -12,6 +12,9 @@ public interface RxJavaGreeter {
     @Send
     Observable<TransactionReceipt> newGreeting(String greeting, Options options);
 
+    @Send(functionName = "newGreeting")
+    Observable<TransactionHash> newGreeting_transactionHash(String greeting);
+
     @Call
     Observable<String> greet();
 
