@@ -4,10 +4,8 @@ import cc.etherspace.calladapter.CallAdapter
 import cc.etherspace.calladapter.PassThroughCallAdaptor
 import cc.etherspace.web3j.Web3jAdapter
 import com.google.common.reflect.TypeToken
-import kotlinx.coroutines.experimental.runBlocking
 import okhttp3.OkHttpClient
 import java.io.IOException
-import java.lang.Thread.sleep
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
@@ -59,7 +57,8 @@ class EtherSpace(val web3: Web3,
                         if (functionName.isNotBlank()) functionName else method.name,
                         params,
                         actualReturnType,
-                        options)
+                        options,
+                        callAdapter)
             }
 
             throw IllegalArgumentException("There is no Send/Call annotation on this method")
@@ -78,7 +77,8 @@ class EtherSpace(val web3: Web3,
                                           functionName: String,
                                           args: List<Any>,
                                           returnType: Type,
-                                          options: Options): Any {
+                                          options: Options,
+                                          callAdapter: CallAdapter<Any, Any>): Any {
         val cd = options.credentials ?: credentials
         ?: throw IllegalArgumentException("Credentials not set")
         val np = options.nonceProvider ?: nonceProvider
@@ -95,12 +95,10 @@ class EtherSpace(val web3: Web3,
         return when {
             returnTypeToken.isSubtypeOf(String::class.java) -> transactionHash
             returnTypeToken.isSubtypeOf(TransactionReceipt::class.java) -> {
-                runBlocking {
-                    TransactionHash(web3, transactionHash).requestTransactionReceipt()
-                }
+                TransactionHash(web3, transactionHash, callAdapter).requestTransactionReceiptBlocking()
             }
             returnTypeToken.isSubtypeOf(TransactionHash::class.java) -> {
-                TransactionHash(web3, transactionHash)
+                TransactionHash(web3, transactionHash, callAdapter)
             }
             else -> throw IllegalArgumentException("Unknown return type:${returnType.typeName}")
         }

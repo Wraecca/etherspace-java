@@ -14,6 +14,10 @@ interface CoroutineGreeter {
     fun newGreeting(greeting: String, options: Options): Deferred<TransactionReceipt>
 
     @Throws(IOException::class)
+    @Send(functionName = "newGreeting")
+    fun newGreeting_transactionHash(greeting: String): Deferred<TransactionHash>
+
+    @Throws(IOException::class)
     @Call
     fun greet(): Deferred<String>
 

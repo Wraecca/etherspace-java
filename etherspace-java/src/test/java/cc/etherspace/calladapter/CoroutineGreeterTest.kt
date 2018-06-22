@@ -1,6 +1,7 @@
 package cc.etherspace.calladapter
 
 import cc.etherspace.*
+import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.runBlocking
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be greater than`
@@ -41,6 +42,20 @@ class CoroutineGreeterTest {
             events[0].returnValue.newGreeting.`should be equal to`("Hello World")
             events[0].returnValue.oldGreetingIdx.`should equal`(SolBytes32(Numeric.hexStringToByteArray("0x592fa743889fc7f92ac2a37bb1f5ba1daf2a5c84741ca0e0061d243a2e6707ba")))
             events[0].returnValue.newGreetingIdx.`should equal`(SolBytes32(Numeric.hexStringToByteArray("0x592fa743889fc7f92ac2a37bb1f5ba1daf2a5c84741ca0e0061d243a2e6707ba")))
+        }
+    }
+
+    @Test
+    fun newGreeting_transactionHash() {
+        runBlocking {
+            val hash = greeter.newGreeting_transactionHash("Hello World").await()
+            hash.hash.length.`should be equal to`(66)
+            val receipt = hash.requestTransactionReceipt<Deferred<TransactionReceipt>>().await()
+            receipt.blockHash.length.`should be equal to`(66)
+            receipt.transactionHash.length.`should be equal to`(66)
+            receipt.from!!.`should be equal to`(Tests.TEST_WALLET_ADDRESS)
+            receipt.to!!.`should be equal to`(Tests.TEST_CONTRACT_ADDRESS)
+            receipt.logs.size.`should be greater than`(0)
         }
     }
 
