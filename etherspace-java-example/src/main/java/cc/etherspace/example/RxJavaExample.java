@@ -1,11 +1,17 @@
 package cc.etherspace.example;
 
-import cc.etherspace.*;
-import cc.etherspace.calladapter.RxJavaCallAdapter;
-import rx.Observable;
-
 import java.io.IOException;
 import java.math.BigInteger;
+
+import cc.etherspace.Call;
+import cc.etherspace.Credentials;
+import cc.etherspace.EtherSpace;
+import cc.etherspace.Options;
+import cc.etherspace.Send;
+import cc.etherspace.TransactionHash;
+import cc.etherspace.TransactionReceipt;
+import cc.etherspace.calladapter.RxJavaCallAdapter;
+import rx.Observable;
 
 public class RxJavaExample {
     public static void main(String[] args) throws IOException {
@@ -23,6 +29,7 @@ public class RxJavaExample {
         System.out.println("Updating greeting to: Hello World");
 
         greeter.newGreeting("Hello World")
+                .flatMap(TransactionHash::<Observable<TransactionReceipt>>requestTransactionReceipt)
                 .subscribe(receipt -> System.out.println("Transaction returned with hash: " + receipt.getTransactionHash()));
 
         greeter.greet().subscribe(greeting -> System.out.println("greeting is " + greeting + " now"));
@@ -31,15 +38,16 @@ public class RxJavaExample {
 
         Options options = new Options(BigInteger.ZERO, BigInteger.valueOf(5_300_000), BigInteger.valueOf(24_000_000_000L));
         greeter.newGreeting("Hello World", options)
+                .flatMap(TransactionHash::<Observable<TransactionReceipt>>requestTransactionReceipt)
                 .subscribe(receipt -> System.out.println("Transaction returned with hash: " + receipt.getTransactionHash()));
     }
 
     public interface Greeter {
         @Send
-        Observable<TransactionReceipt> newGreeting(String greeting) throws IOException;
+        Observable<TransactionHash> newGreeting(String greeting) throws IOException;
 
         @Send
-        Observable<TransactionReceipt> newGreeting(String greeting, Options options) throws IOException;
+        Observable<TransactionHash> newGreeting(String greeting, Options options) throws IOException;
 
         @Call
         Observable<String> greet();

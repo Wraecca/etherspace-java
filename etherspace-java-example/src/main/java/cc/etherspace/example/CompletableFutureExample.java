@@ -1,11 +1,17 @@
 package cc.etherspace.example;
 
-import cc.etherspace.*;
-import cc.etherspace.calladapter.CompletableFutureCallAdapter;
-
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.concurrent.CompletableFuture;
+
+import cc.etherspace.Call;
+import cc.etherspace.Credentials;
+import cc.etherspace.EtherSpace;
+import cc.etherspace.Options;
+import cc.etherspace.Send;
+import cc.etherspace.TransactionHash;
+import cc.etherspace.TransactionReceipt;
+import cc.etherspace.calladapter.CompletableFutureCallAdapter;
 
 public class CompletableFutureExample {
     public static void main(String[] args) throws IOException {
@@ -22,9 +28,9 @@ public class CompletableFutureExample {
 
         System.out.println("Updating greeting to: Hello World");
 
-        TransactionReceipt receipt = greeter.newGreeting("Hello World").join();
-
-        System.out.println("Transaction returned with hash: " + receipt.getTransactionHash());
+        TransactionHash hash = greeter.newGreeting("Hello World").join();
+        hash.<CompletableFuture<TransactionReceipt>>requestTransactionReceipt().join();
+        System.out.println("Transaction returned with hash: " + hash.getHash());
 
         String greeting = greeter.greet().join();
 
@@ -33,17 +39,18 @@ public class CompletableFutureExample {
         System.out.println("Updating greeting with higher gas");
 
         Options options = new Options(BigInteger.ZERO, BigInteger.valueOf(5_300_000), BigInteger.valueOf(24_000_000_000L));
-        receipt = greeter.newGreeting("Hello World", options).join();
+        hash = greeter.newGreeting("Hello World", options).join();
+        hash.<CompletableFuture<TransactionReceipt>>requestTransactionReceipt().join();
 
-        System.out.println("Transaction returned with hash: " + receipt.getTransactionHash());
+        System.out.println("Transaction returned with hash: " + hash.getHash());
     }
 
     public interface Greeter {
         @Send
-        CompletableFuture<TransactionReceipt> newGreeting(String greeting) throws IOException;
+        CompletableFuture<TransactionHash> newGreeting(String greeting) throws IOException;
 
         @Send
-        CompletableFuture<TransactionReceipt> newGreeting(String greeting, Options options) throws IOException;
+        CompletableFuture<TransactionHash> newGreeting(String greeting, Options options) throws IOException;
 
         @Call
         CompletableFuture<String> greet();

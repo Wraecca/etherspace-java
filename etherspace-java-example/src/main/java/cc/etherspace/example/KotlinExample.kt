@@ -7,11 +7,11 @@ import java.math.BigInteger
 interface Greeter {
     @Throws(IOException::class)
     @Send
-    fun newGreeting(greeting: String): TransactionReceipt
+    fun newGreeting(greeting: String): TransactionHash
 
     @Throws(IOException::class)
     @Send
-    fun newGreeting(greeting: String, options: Options): TransactionReceipt
+    fun newGreeting(greeting: String, options: Options): TransactionHash
 
     @Throws(IOException::class)
     @Call
@@ -31,9 +31,10 @@ fun main(args: Array<String>) {
 
     println("Updating greeting to: Hello World")
 
-    var receipt = greeter.newGreeting("Hello World")
+    var hash = greeter.newGreeting("Hello World")
+    hash.requestTransactionReceipt<TransactionReceipt>()
 
-    println("Transaction returned with hash: ${receipt.transactionHash}")
+    println("Transaction returned with hash: ${hash.hash}")
 
     val greeting = greeter.greet()
 
@@ -42,7 +43,8 @@ fun main(args: Array<String>) {
     println("Updating greeting with higher gas")
 
     val options = Options(BigInteger.ZERO, BigInteger.valueOf(5_300_000), BigInteger.valueOf(24_000_000_000L))
-    receipt = greeter.newGreeting("Hello World", options)
+    hash = greeter.newGreeting("Hello World", options)
+    hash.requestTransactionReceipt<TransactionReceipt>()
 
-    println("Transaction returned with hash: ${receipt.transactionHash}")
+    println("Transaction returned with hash: ${hash.hash}")
 }

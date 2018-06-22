@@ -3,8 +3,10 @@ package cc.etherspace.example
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.EditText
+import kotlinx.coroutines.experimental.Deferred
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import org.web3j.protocol.core.methods.response.TransactionReceipt
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), AnkoLogger {
@@ -53,7 +55,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
     private suspend fun newGreeting() {
         greeting.isEnabled = false
-        greeter.newGreeting(greeting.text.toString()).await()
+        val hash = greeter.newGreeting(greeting.text.toString()).await()
+        hash.requestTransactionReceipt<Deferred<TransactionReceipt>>().await()
         greeting.isEnabled = true
         toast("newGreeting: ${greeting.text}")
     }

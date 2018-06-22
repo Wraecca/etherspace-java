@@ -10,11 +10,11 @@ import java.math.BigInteger
 interface CoroutineGreeter {
     @Throws(IOException::class)
     @Send
-    fun newGreeting(greeting: String): Deferred<TransactionReceipt>
+    fun newGreeting(greeting: String): Deferred<TransactionHash>
 
     @Throws(IOException::class)
     @Send
-    fun newGreeting(greeting: String, options: Options): Deferred<TransactionReceipt>
+    fun newGreeting(greeting: String, options: Options): Deferred<TransactionHash>
 
     @Throws(IOException::class)
     @Call
@@ -36,9 +36,10 @@ fun main(args: Array<String>) {
 
         println("Updating greeting to: Hello World")
 
-        var receipt = greeter.newGreeting("Hello World")
+        var hash = greeter.newGreeting("Hello World").await()
+        hash.requestTransactionReceipt<Deferred<TransactionReceipt>>()
 
-        println("Transaction returned with hash: ${receipt.await().transactionHash}")
+        println("Transaction returned with hash: ${hash.hash}")
 
         val greeting = greeter.greet().await()
 
@@ -47,8 +48,9 @@ fun main(args: Array<String>) {
         println("Updating greeting with higher gas")
 
         val options = Options(BigInteger.ZERO, BigInteger.valueOf(5_300_000), BigInteger.valueOf(24_000_000_000L))
-        receipt = greeter.newGreeting("Hello World", options)
+        hash = greeter.newGreeting("Hello World", options).await()
+        hash.requestTransactionReceipt<Deferred<TransactionReceipt>>()
 
-        println("Transaction returned with hash: ${receipt.await().transactionHash}")
+        println("Transaction returned with hash: ${hash.hash}")
     }
 }

@@ -1,9 +1,14 @@
 package cc.etherspace.example;
 
-import cc.etherspace.*;
-
 import java.io.IOException;
 import java.math.BigInteger;
+
+import cc.etherspace.Call;
+import cc.etherspace.Credentials;
+import cc.etherspace.EtherSpace;
+import cc.etherspace.Options;
+import cc.etherspace.Send;
+import cc.etherspace.TransactionHash;
 
 public class JavaExample {
     public static void main(String[] args) throws IOException {
@@ -19,9 +24,10 @@ public class JavaExample {
 
         System.out.println("Updating greeting to: Hello World");
 
-        TransactionReceipt receipt = greeter.newGreeting("Hello World");
+        TransactionHash hash = greeter.newGreeting("Hello World");
+        hash.requestTransactionReceipt();
 
-        System.out.println("Transaction returned with hash: " + receipt.getTransactionHash());
+        System.out.println("Transaction returned with hash: " + hash.getHash());
 
         String greeting = greeter.greet();
 
@@ -30,17 +36,18 @@ public class JavaExample {
         System.out.println("Updating greeting with higher gas");
 
         Options options = new Options(BigInteger.ZERO, BigInteger.valueOf(5_300_000), BigInteger.valueOf(24_000_000_000L));
-        receipt = greeter.newGreeting("Hello World", options);
+        hash = greeter.newGreeting("Hello World", options);
+        hash.requestTransactionReceipt();
 
-        System.out.println("Transaction returned with hash: " + receipt.getTransactionHash());
+        System.out.println("Transaction returned with hash: " + hash.getHash());
     }
 
     public interface Greeter {
         @Send
-        TransactionReceipt newGreeting(String greeting) throws IOException;
+        TransactionHash newGreeting(String greeting) throws IOException;
 
         @Send
-        TransactionReceipt newGreeting(String greeting, Options options) throws IOException;
+        TransactionHash newGreeting(String greeting, Options options) throws IOException;
 
         @Call
         String greet();
