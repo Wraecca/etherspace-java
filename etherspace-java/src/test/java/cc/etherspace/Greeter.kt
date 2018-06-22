@@ -13,7 +13,7 @@ interface Greeter {
     fun newGreeting_functionName(greeting: String): TransactionReceipt
 
     @Throws(IOException::class)
-    @Send
+    @Send(functionName = "newGreeting")
     fun newGreeting_transactionHash(greeting: String): TransactionHash
 
     @Throws(IOException::class)
