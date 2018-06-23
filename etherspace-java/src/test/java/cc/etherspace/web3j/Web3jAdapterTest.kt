@@ -52,8 +52,8 @@ class Web3jAdapterTest {
                 Numeric.hexStringToByteArray("0x70757c5a9bad86a90c89951c078ff45e0830c99aa313576d7dba349568251a9c"))
 
         val data = Numeric.hexStringToByteArray("0x48540bdede62ae1b3868651336d31d36c29100af9db1559945879d14532a8067")
-        val address = web3jAdapter.eth.personal.ecRecover(data, signature)
-        address.`should be equal to`(address)
+        val recoveredAddress = web3jAdapter.eth.personal.ecRecover(data, signature)
+        address.`should be equal to`(recoveredAddress)
     }
 
     @Test

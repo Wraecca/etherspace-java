@@ -25,16 +25,10 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
     override val eth: Web3jEth = Web3jEth()
 
     class Web3jPersonal : Web3.Personal {
-        override fun ecRecover(dataThatWasSigned: String, signature: Web3.Signature): String =
-                ecRecover(dataThatWasSigned.toByteArray(Charsets.UTF_8), signature)
-
         override fun ecRecover(dataThatWasSigned: ByteArray, signature: Web3.Signature): String {
             val prefixMsgHash = attachEthereumSignedMessage(dataThatWasSigned)
-            val ecdsaSignature = ECDSASignature(Numeric.toBigInt(signature.r),
-                    Numeric.toBigInt(signature.s))
-            val publicKey = RecoverFromSignature.recoverFromSignature(signature.v - 27,
-                    ecdsaSignature,
-                    prefixMsgHash)
+            val publicKey = Sign.signedMessageToKey(prefixMsgHash,
+                    Sign.SignatureData(signature.v, signature.r, signature.s))
             return Keys.toChecksumAddress(Numeric.prependHexPrefix(Keys.getAddress(publicKey)))
         }
     }

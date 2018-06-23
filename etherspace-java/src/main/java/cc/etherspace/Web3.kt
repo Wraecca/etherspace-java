@@ -61,9 +61,6 @@ interface Web3 {
 
     interface Personal {
         @Throws(IOException::class)
-        fun ecRecover(dataThatWasSigned: String, signature: Signature): String
-
-        @Throws(IOException::class)
         fun ecRecover(dataThatWasSigned: ByteArray, signature: Signature): String
     }
 
