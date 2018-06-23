@@ -9,6 +9,7 @@ import cc.etherspace.EtherSpace;
 import cc.etherspace.Options;
 import cc.etherspace.Send;
 import cc.etherspace.TransactionHash;
+import cc.etherspace.TransactionReceipt;
 
 public class JavaExample {
     public static void main(String[] args) throws IOException {
@@ -25,7 +26,7 @@ public class JavaExample {
         System.out.println("Updating greeting to: Hello World");
 
         TransactionHash hash = greeter.newGreeting("Hello World");
-        hash.requestTransactionReceipt();
+        TransactionReceipt receipt = hash.requestTransactionReceipt();
 
         System.out.println("Transaction returned with hash: " + hash.getHash());
 
@@ -37,7 +38,7 @@ public class JavaExample {
 
         Options options = new Options(BigInteger.ZERO, BigInteger.valueOf(5_300_000), BigInteger.valueOf(24_000_000_000L));
         hash = greeter.newGreeting("Hello World", options);
-        hash.requestTransactionReceipt();
+        receipt = hash.requestTransactionReceipt();
 
         System.out.println("Transaction returned with hash: " + hash.getHash());
     }

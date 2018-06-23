@@ -15,7 +15,6 @@ import org.web3j.protocol.http.HttpService
 import org.web3j.utils.Numeric
 import java.io.IOException
 import java.math.BigInteger
-import java.nio.ByteBuffer
 
 
 class Web3jAdapter(val web3j: Web3j) : Web3 {
@@ -25,44 +24,41 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
 
     override val eth: Web3jEth = Web3jEth()
 
-    class Web3jAccounts : Web3.Accounts {
-        override fun sign(message: String, privateKey: String): Web3.Signature {
-            return sign(message.toByteArray(Charsets.UTF_8), privateKey)
+    class Web3jPersonal : Web3.Personal {
+        override fun ecRecover(dataThatWasSigned: String, signature: Web3.Signature): String =
+                ecRecover(dataThatWasSigned.toByteArray(Charsets.UTF_8), signature)
+
+        override fun ecRecover(dataThatWasSigned: ByteArray, signature: Web3.Signature): String {
+            val prefixMsgHash = attachEthereumSignedMessage(dataThatWasSigned)
+            val ecdsaSignature = ECDSASignature(Numeric.toBigInt(signature.r),
+                    Numeric.toBigInt(signature.s))
+            val publicKey = RecoverFromSignature.recoverFromSignature(signature.v - 27,
+                    ecdsaSignature,
+                    prefixMsgHash)
+            return Keys.toChecksumAddress(Numeric.prependHexPrefix(Keys.getAddress(publicKey)))
         }
+    }
+
+    class Web3jAccounts : Web3.Accounts {
+        override fun sign(message: String, privateKey: String): Web3.Signature =
+                sign(message.toByteArray(Charsets.UTF_8), privateKey)
 
         /**
          * from: https://github.com/EuroHsu/TestLibrary/blob/6883528dbcddb283f14955620f042b4ea3253624/src/main/java/com/example/testlibrary/cryptos/signer.java
          */
         override fun sign(messageHash: ByteArray, privateKey: String): Web3.Signature {
-            val prefix = "\u0019Ethereum Signed Message:\n".toByteArray(Charsets.UTF_8)
-            val prefixSize = ByteUtils.concatenate(prefix, messageHash.size.toString().toByteArray(Charsets.UTF_8))
-            val prefixMsgHash = ByteUtils.concatenate(prefixSize, messageHash)
+            val prefixMsgHash = attachEthereumSignedMessage(messageHash)
             val ecKeyPair = ECKeyPair.create(Numeric.toBigInt(privateKey))
             val signatureData = Sign.signMessage(prefixMsgHash, ecKeyPair)
-            return Web3.Signature(Numeric.toHexString(Hash.sha3(prefixMsgHash)),
-                    toHexString(signatureData.v),
-                    Numeric.toHexString(signatureData.r),
-                    Numeric.toHexString(signatureData.s),
-                    Numeric.toHexString(signatureEncode(signatureData)))
-        }
-
-        private fun toHexString(byte: Byte) = String.format("0x%02x", byte)
-
-        private fun signatureEncode(signatureData: Sign.SignatureData): ByteArray {
-            assert(signatureData.r.size == 32)
-            assert(signatureData.s.size == 32)
-            assert(signatureData.v.toInt() == 27 || signatureData.v.toInt() == 28)
-            val buffer = ByteBuffer.allocate(SIGNATURE_LENGTH)
-            buffer.put(signatureData.r)
-            buffer.put(signatureData.s)
-            buffer.put(signatureData.v)
-            assert(buffer.position() == SIGNATURE_LENGTH)
-            return buffer.array()
+            return Web3.Signature(signatureData.v,
+                    signatureData.r,
+                    signatureData.s)
         }
     }
 
     inner class Web3jEth : Web3.Eth {
         override val accounts: Web3.Accounts = Web3jAccounts()
+        override val personal: Web3.Personal = Web3jPersonal()
 
         override fun sign(dataToSign: String, address: String): String {
             return web3j.ethSign(address, dataToSign).send().signature
@@ -213,8 +209,6 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
     }
 
     companion object {
-        private const val SIGNATURE_LENGTH = 65
-
         private fun createWeb3j(client: OkHttpClient?, provider: String): Web3j {
             val httpService = if (client != null) HttpService(provider, client, false) else HttpService(provider)
             return try {
@@ -226,6 +220,12 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
             } catch (e: Exception) {
                 Web3j.build(httpService)
             }
+        }
+
+        private fun attachEthereumSignedMessage(messageHash: ByteArray): ByteArray? {
+            val prefix = "\u0019Ethereum Signed Message:\n".toByteArray(Charsets.UTF_8)
+            val prefixSize = ByteUtils.concatenate(prefix, messageHash.size.toString().toByteArray(Charsets.UTF_8))
+            return ByteUtils.concatenate(prefixSize, messageHash)
         }
     }
 }

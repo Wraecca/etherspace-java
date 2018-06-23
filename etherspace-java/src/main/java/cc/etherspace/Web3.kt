@@ -6,6 +6,7 @@ import org.web3j.utils.Numeric
 import java.io.IOException
 import java.lang.reflect.Type
 import java.math.BigInteger
+import java.nio.ByteBuffer
 
 @Suppress("unused")
 interface Web3 {
@@ -24,6 +25,7 @@ interface Web3 {
 
     interface Eth {
         val accounts: Accounts
+        val personal: Personal
 
         @Throws(IOException::class)
         fun sign(dataToSign: String, address: String): String
@@ -57,11 +59,32 @@ interface Web3 {
         fun sign(messageHash: ByteArray, privateKey: String): Signature
     }
 
-    data class Signature(val messageHash: String,
-                         val v: String,
-                         val r: String,
-                         val s: String,
-                         val signature: String)
+    interface Personal {
+        @Throws(IOException::class)
+        fun ecRecover(dataThatWasSigned: String, signature: Signature): String
+
+        @Throws(IOException::class)
+        fun ecRecover(dataThatWasSigned: ByteArray, signature: Signature): String
+    }
+
+    data class Signature(val v: Byte,
+                         val r: ByteArray,
+                         val s: ByteArray) {
+        val signature: String
+            get() = Numeric.toHexString(signatureEncode(v, r, s))
+
+        private fun signatureEncode(v: Byte, r: ByteArray, s: ByteArray): ByteArray {
+            assert(r.size == 32)
+            assert(s.size == 32)
+            assert(v.toInt() == 27 || v.toInt() == 28)
+            val buffer = ByteBuffer.allocate(SIGNATURE_LENGTH)
+            buffer.put(r)
+            buffer.put(s)
+            buffer.put(v)
+            assert(buffer.position() == SIGNATURE_LENGTH)
+            return buffer.array()
+        }
+    }
 
     data class DefaultBlock(val value: String) {
         constructor(blockNumber: BigInteger) : this(Numeric.encodeQuantity(blockNumber))
@@ -93,4 +116,7 @@ interface Web3 {
                 nonce)
     }
 
+    companion object {
+        private const val SIGNATURE_LENGTH = 65
+    }
 }
