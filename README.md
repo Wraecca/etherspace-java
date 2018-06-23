@@ -41,7 +41,7 @@ By defining a Smart Contract interface in Kotlin / Java: (see: [Smart Contract I
 interface Greeter {
     @Throws(IOException::class)
     @Send
-    fun newGreeting(greeting: String): TransactionReceipt
+    fun newGreeting(greeting: String): TransactionHash
 
     @Throws(IOException::class)
     @Call
@@ -53,7 +53,7 @@ interface Greeter {
 // Java
 public interface Greeter {
     @Send
-    TransactionReceipt newGreeting(String greeting) throws IOException;
+    TransactionHash newGreeting(String greeting) throws IOException;
     
     @Call
     String greet() throws IOException;
@@ -72,7 +72,9 @@ val etherSpace = EtherSpace.build {
 }
 var greeter = etherSpace.create(SMART_CONTRACT_ADDRESS, Greeter::class.java)
 
-val receipt = greeter.newGreeting("Hello World")
+val hash = greeter.newGreeting("Hello World")
+val receipt = hash.requestTransactionReceipt<TransactionReceipt>()
+
 println(greeter.greet()) // Should be "Hello World"
 ```
 
@@ -84,7 +86,9 @@ EtherSpace etherSpace = new EtherSpace.Builder()
         .build();
 Greeter greeter = etherSpace.create(SMART_CONTRACT_ADDRESS, Greeter.class);
 
-TransactionReceipt receipt = greeter.newGreeting("Hello World");
+TransactionHash hash = greeter.newGreeting("Hello World");
+TransactionReceipt receipt = hash.requestTransactionReceipt();
+
 System.out.println(greeter.greet()); // Should be "Hello World"
 
 ```
