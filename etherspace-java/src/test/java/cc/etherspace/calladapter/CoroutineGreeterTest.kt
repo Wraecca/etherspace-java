@@ -19,7 +19,7 @@ class CoroutineGreeterTest {
     fun setUp() {
         val etherSpace = EtherSpace.build {
             provider = "https://rinkeby.infura.io/"
-            credentials = Credentials(Tests.TEST_WALLET_KEY)
+            credentials = WalletCredentials(Tests.TEST_WALLET_KEY)
             callAdapters += CoroutineCallAdapter()
         }
         greeter = etherSpace.create(Tests.TEST_CONTRACT_ADDRESS, CoroutineGreeter::class.java)

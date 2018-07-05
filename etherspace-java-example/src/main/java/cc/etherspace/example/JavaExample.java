@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 
 import cc.etherspace.Call;
-import cc.etherspace.Credentials;
+import cc.etherspace.WalletCredentials;
 import cc.etherspace.EtherSpace;
 import cc.etherspace.Options;
 import cc.etherspace.Send;
@@ -18,7 +18,7 @@ public class JavaExample {
         // Please fill in your private key or wallet file.
         EtherSpace etherSpace = new EtherSpace.Builder()
                 .provider("https://rinkeby.infura.io/")
-                .credentials(new Credentials("YOUR_PRIVATE_KEY_OR_WALLET"))
+                .credentials(new WalletCredentials("YOUR_PRIVATE_KEY_OR_WALLET"))
                 .build();
         // The greeter smart contract has already been deployed to this address on rinkeby.
         Greeter greeter = etherSpace.create("0x7c7fd86443a8a0b249080cfab29f231c31806527", Greeter.class);

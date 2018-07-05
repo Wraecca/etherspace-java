@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
-import cc.etherspace.Credentials;
+import cc.etherspace.WalletCredentials;
 import cc.etherspace.EtherSpace;
 import cc.etherspace.Event;
 import cc.etherspace.JavaGreeter;
@@ -26,7 +26,7 @@ public class CompletableFutureGreeterTest {
 
     @Before
     public void setUp() {
-        Credentials credentials = new Credentials(Tests.TEST_WALLET_KEY);
+        WalletCredentials credentials = new WalletCredentials(Tests.TEST_WALLET_KEY);
         EtherSpace etherSpace = new EtherSpace.Builder()
                 .provider("https://rinkeby.infura.io/")
                 .credentials(credentials)

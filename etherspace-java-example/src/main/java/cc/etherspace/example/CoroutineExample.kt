@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
         // Please fill in your private key or wallet file.
         val etherSpace = EtherSpace.build {
             provider = "https://rinkeby.infura.io/"
-            credentials = Credentials("YOUR_PRIVATE_KEY_OR_WALLET")
+            credentials = WalletCredentials("YOUR_PRIVATE_KEY_OR_WALLET")
             callAdapters += CoroutineCallAdapter()
         }
         // The greeter smart contract has already been deployed to this address on rinkeby.

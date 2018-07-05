@@ -2,7 +2,7 @@ package cc.etherspace.example
 
 import android.app.Application
 import android.content.Context
-import cc.etherspace.Credentials
+import cc.etherspace.WalletCredentials
 import cc.etherspace.EtherSpace
 import cc.etherspace.calladapter.CoroutineCallAdapter
 import dagger.Module
@@ -24,14 +24,14 @@ class ExampleModule(private val application: Application) {
         // Please fill in your private key or wallet file.
         return EtherSpace.Builder()
                 .provider("https://rinkeby.infura.io/")
-                .credentials(Credentials("YOUR_PRIVATE_KEY_OR_WALLET"))
+                .credentials(WalletCredentials("YOUR_PRIVATE_KEY_OR_WALLET"))
                 .addCallAdapter(CoroutineCallAdapter())
                 .build()
 
         // Won't compile. A dagger bug?
 //        return EtherSpace.build {
 //            provider = "https://rinkeby.infura.io/"
-//            credentials = Credentials(Tests.TEST_WALLET_KEY)
+//            credentials = WalletCredentials(Tests.TEST_WALLET_KEY)
 //            callAdapters += CoroutineCallAdapter()
 //        }
     }

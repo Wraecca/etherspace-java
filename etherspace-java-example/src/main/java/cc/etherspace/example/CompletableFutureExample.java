@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.util.concurrent.CompletableFuture;
 
 import cc.etherspace.Call;
-import cc.etherspace.Credentials;
+import cc.etherspace.WalletCredentials;
 import cc.etherspace.EtherSpace;
 import cc.etherspace.Options;
 import cc.etherspace.Send;
@@ -20,7 +20,7 @@ public class CompletableFutureExample {
         // Please fill in your private key or wallet file.
         EtherSpace etherSpace = new EtherSpace.Builder()
                 .provider("https://rinkeby.infura.io/")
-                .credentials(new Credentials("YOUR_PRIVATE_KEY_OR_WALLET"))
+                .credentials(new WalletCredentials("YOUR_PRIVATE_KEY_OR_WALLET"))
                 .addCallAdapter(new CompletableFutureCallAdapter<>())
                 .build();
         // The greeter smart contract has already been deployed to this address on rinkeby.

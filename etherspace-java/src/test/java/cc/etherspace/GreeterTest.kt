@@ -25,7 +25,7 @@ class GreeterTest {
         val etherSpace = EtherSpace.build {
             client = okHttpClient
             provider = "https://rinkeby.infura.io/"
-            credentials = Credentials(Tests.TEST_WALLET_KEY)
+            credentials = WalletCredentials(Tests.TEST_WALLET_KEY)
         }
         greeter = etherSpace.create(Tests.TEST_CONTRACT_ADDRESS, Greeter::class.java)
     }

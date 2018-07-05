@@ -17,7 +17,7 @@ public class JavaGreeterTest {
     public void setUp() {
         EtherSpace etherSpace = new EtherSpace.Builder()
                 .provider("https://rinkeby.infura.io/")
-                .credentials(new Credentials(Tests.TEST_WALLET_KEY))
+                .credentials(new WalletCredentials(Tests.TEST_WALLET_KEY))
                 .build();
         greeter = etherSpace.create(Tests.TEST_CONTRACT_ADDRESS, JavaGreeter.class);
     }

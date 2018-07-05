@@ -5,7 +5,9 @@ import cc.etherspace.Web3
 import com.fasterxml.jackson.annotation.JsonValue
 import okhttp3.OkHttpClient
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils
-import org.web3j.crypto.*
+import org.web3j.crypto.ECKeyPair
+import org.web3j.crypto.Keys
+import org.web3j.crypto.Sign
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.methods.request.Transaction
@@ -118,10 +120,7 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
 
         override fun signTransaction(transactionObject: Web3.TransactionObject,
                                      credentials: cc.etherspace.Credentials): String {
-            val signedMessage = TransactionEncoder.signMessage(
-                    transactionObject.toRawTransaction(),
-                    credentials.toWeb3jCredentials())
-            return Numeric.toHexString(signedMessage)
+            return credentials.signTransaction(transactionObject)
         }
 
         @Throws(IOException::class)
@@ -139,15 +138,6 @@ class Web3jAdapter(val web3j: Web3j) : Web3 {
             }
             return response.transactionHash
         }
-
-        private fun Web3.TransactionObject.toRawTransaction(): RawTransaction = RawTransaction.createTransaction(nonce,
-                gasPrice,
-                gas,
-                to,
-                value,
-                data)
-
-        private fun cc.etherspace.Credentials.toWeb3jCredentials(): Credentials = Credentials.create(privateKey)
 
         @Suppress("ObjectLiteralToLambda")
         private fun Web3.DefaultBlock.toDefaultBlockParameter(): DefaultBlockParameter {
