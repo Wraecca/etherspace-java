@@ -3,7 +3,7 @@ apply plugin: 'com.github.ben-manes.versions'
 buildscript {
     ext.anko_version = '0.10.5'
     ext.dagger_version = '2.16'
-    ext.kotlin_version = '1.2.50'
+    ext.kotlin_version = '1.2.51'
     ext.web3j_version = '3.3.1'
     ext.mockito_inline_version = '2.19.0'
     ext.kotlin_unsigned_version = 'v3.1.2'
