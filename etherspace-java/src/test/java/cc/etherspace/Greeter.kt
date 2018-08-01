@@ -22,6 +22,10 @@ interface Greeter {
 
     @Throws(IOException::class)
     @Call
+    fun twoDimensionArray(twoDimensionArray: List<SolArray5<SolUint256>>, row: SolUint256, col: SolUint256): SolUint256
+
+    @Throws(IOException::class)
+    @Call
     fun greet(): String
 
     @Throws(IOException::class)
