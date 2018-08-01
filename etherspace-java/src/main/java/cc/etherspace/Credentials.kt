@@ -11,6 +11,7 @@ import java.nio.charset.Charset
 interface Credentials {
     val address: String
     fun signTransaction(transactionObject: Web3.TransactionObject): String
+    fun sign(messageHash: ByteArray): Web3.Signature
 }
 
 open class WalletCredentials : Credentials {
@@ -54,6 +55,15 @@ open class WalletCredentials : Credentials {
             to,
             value,
             data)
+
+    override fun sign(messageHash: ByteArray): Web3.Signature {
+        val prefixMsgHash = Web3.attachEthereumSignedMessage(messageHash)
+        val ecKeyPair = ECKeyPair.create(Numeric.toBigInt(privateKey))
+        val signatureData = Sign.signMessage(prefixMsgHash, ecKeyPair)
+        return Web3.Signature(signatureData.v,
+                signatureData.r,
+                signatureData.s)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -1,5 +1,6 @@
 package cc.etherspace
 
+import org.bouncycastle.pqc.math.linearalgebra.ByteUtils
 import org.web3j.tx.Contract
 import org.web3j.tx.ManagedTransaction
 import org.web3j.utils.Numeric
@@ -115,5 +116,11 @@ interface Web3 {
 
     companion object {
         private const val SIGNATURE_LENGTH = 65
+
+        fun attachEthereumSignedMessage(messageHash: ByteArray): ByteArray? {
+            val prefix = "\u0019Ethereum Signed Message:\n".toByteArray(Charsets.UTF_8)
+            val prefixSize = ByteUtils.concatenate(prefix, messageHash.size.toString().toByteArray(Charsets.UTF_8))
+            return ByteUtils.concatenate(prefixSize, messageHash)
+        }
     }
 }
