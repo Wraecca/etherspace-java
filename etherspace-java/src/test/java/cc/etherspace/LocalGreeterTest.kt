@@ -42,7 +42,7 @@ class LocalGreeterTest {
                 .toTypedArray()
         val arrays = listOf(SolArray5(array), SolArray5(array), SolArray5(array), SolArray5(array), SolArray5(array))
         val ret = greeter.twoDimensionArray(arrays, SolUint256(1), SolUint256(2))
-        ret.`should equal`(SolUint256(7))
+        ret.`should equal`(SolUint256(3))
     }
 
     @Test

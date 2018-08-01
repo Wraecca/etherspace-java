@@ -84,13 +84,15 @@ class EtherSpace(val web3: Web3,
         val np = options.nonceProvider ?: nonceProvider
 
         val encodedFunction = web3.abi.encodeFunctionCall(args, functionName)
-        val nonce = np.getNonce(web3, cd.address)
-        val transactionObject = Web3.TransactionObject(cd.address,
-                toAddress,
-                encodedFunction,
-                options,
-                nonce)
-        val transactionHash = web3.eth.sendTransaction(transactionObject, cd)
+        val transactionHash = np.provideNonce(web3, cd.address) { nonce ->
+            val transactionObject = Web3.TransactionObject(cd.address,
+                    toAddress,
+                    encodedFunction,
+                    options,
+                    nonce)
+            web3.eth.sendTransaction(transactionObject, cd)
+        }
+
         val returnTypeToken = TypeToken.of(returnType)
         return when {
             returnTypeToken.isSubtypeOf(String::class.java) -> transactionHash
@@ -150,7 +152,11 @@ class EtherSpace(val web3: Web3,
     }
 
     object TransactionCountNonceProvider : NonceProvider {
-        override fun getNonce(web3: Web3, address: String): BigInteger {
+        override fun provideNonce(web3: Web3, address: String, sendTransaction: (BigInteger) -> String): String {
+            return sendTransaction(getNonce(web3, address))
+        }
+
+        private fun getNonce(web3: Web3, address: String): BigInteger {
             return web3.eth.getTransactionCount(address, Web3.DefaultBlock.PENDING)
         }
     }
