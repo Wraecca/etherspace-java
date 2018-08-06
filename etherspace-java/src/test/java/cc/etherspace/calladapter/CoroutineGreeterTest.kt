@@ -3,9 +3,7 @@ package cc.etherspace.calladapter
 import cc.etherspace.*
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.runBlocking
-import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should be greater than`
-import org.amshove.kluent.`should equal`
+import org.amshove.kluent.*
 import org.junit.Before
 import org.junit.Test
 import org.web3j.utils.Numeric
@@ -83,19 +81,14 @@ class CoroutineGreeterTest {
         }
     }
 
-    fun newPersonalGreeting() {
-        runBlocking {
-            val transactionHash = greeter.newPersonalGreeting("tempo", "Hello World").await()
-            transactionHash.length.`should be equal to`(66)
-        }
-    }
-
     @Test
-    fun personalGreet() {
+    fun boolType() {
         runBlocking {
-            val pair = greeter.personalGreet().await()
-            pair.first.`should equal`("tempo")
-            pair.second.`should equal`("Hello World")
+            var greet = greeter.boolType(true).await()
+            greet.`should be true`()
+
+            greet = greeter.boolType(false).await()
+            greet.`should be false`()
         }
     }
 }

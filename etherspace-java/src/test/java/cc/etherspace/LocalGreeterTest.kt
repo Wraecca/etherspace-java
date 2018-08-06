@@ -46,6 +46,15 @@ class LocalGreeterTest {
     }
 
     @Test
+    fun boolType() {
+        var b = greeter.boolType(true)
+        b.`should be equal to`(true)
+
+        b = greeter.boolType(false)
+        b.`should be equal to`(false)
+    }
+
+    @Test
     fun newGreeting() {
         val receipt = greeter.newGreeting("Hello World")
         receipt.blockHash.length.`should be equal to`(66)

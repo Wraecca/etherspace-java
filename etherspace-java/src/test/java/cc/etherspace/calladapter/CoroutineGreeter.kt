@@ -26,12 +26,8 @@ interface CoroutineGreeter {
     fun greet_wrongFunctionName(): Deferred<String>
 
     @Throws(IOException::class)
-    @Send
-    fun newPersonalGreeting(from: String, greeting: String): Deferred<String>
-
-    @Throws(IOException::class)
     @Call
-    fun personalGreet(): Deferred<Pair<String, String>>
+    fun boolType(bool: Boolean): Deferred<Boolean>
 
     data class Modified @EventConstructor constructor(@Indexed(value = String::class) val oldGreetingIdx: SolBytes32,
                                                       @Indexed(value = String::class) val newGreetingIdx: SolBytes32,

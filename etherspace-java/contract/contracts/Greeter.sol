@@ -41,4 +41,20 @@ contract greeter is mortal {
     event Modified(
             string indexed oldGreetingIdx, string indexed newGreetingIdx,
             string oldGreeting, string newGreeting);
+
+    function boolType(bool a) constant returns (bool) {
+        return a;
+    }
+
+    function intType(int a) constant returns (int) {
+        return a;
+    }
+
+    function uintType(uint a) constant returns (uint) {
+        return a;
+    }
+
+    function int24Type(int24 a) constant returns (int24) {
+        return a;
+    }
 }

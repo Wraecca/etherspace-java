@@ -110,16 +110,21 @@ class Web3jAbi : Web3.Abi {
         val web3jType = when {
             typeToken.childOf(String::class) -> Utf8String::class.java
             typeToken.childOf(Boolean::class) -> Bool::class.java
+            typeToken.childOf(java.lang.Boolean::class) -> Bool::class.java
             typeToken.childOf(BigInteger::class) -> Int256::class.java
             typeToken.childOf(Short::class) -> Int16::class.java
+            typeToken.childOf(java.lang.Short::class) -> Int16::class.java
             typeToken.childOf(Int::class) -> Int32::class.java
+            typeToken.childOf(java.lang.Integer::class) -> Int32::class.java
             typeToken.childOf(Long::class) -> Int64::class.java
+            typeToken.childOf(java.lang.Long::class) -> Int64::class.java
             typeToken.childOf(Ushort::class) -> Uint16::class.java
             typeToken.childOf(unsigned.Uint::class) -> Uint32::class.java
             typeToken.childOf(Ulong::class) -> Uint64::class.java
             typeToken.childOf(SolNumber::class) -> typeToken.toWeb3jNumberType()
             typeToken.childOf(SolAddress::class) -> Address::class.java
             typeToken.childOf(Byte::class) -> Bytes1::class.java
+            typeToken.childOf(java.lang.Byte::class) -> Bytes1::class.java
             typeToken.childOf(SolBytes::class) -> typeToken.toWeb3jBytesType()
             typeToken.childOf(ByteArray::class) -> DynamicBytes::class.java
             typeToken.childOf(List::class) -> toWeb3jArrayType(typeToken)
