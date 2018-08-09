@@ -3,6 +3,7 @@ package cc.etherspace
 import cc.etherspace.calladapter.CallAdapter
 import cc.etherspace.calladapter.PassThroughCallAdaptor
 import cc.etherspace.web3j.Web3jAdapter
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.google.common.reflect.TypeToken
 import okhttp3.OkHttpClient
 import java.io.IOException

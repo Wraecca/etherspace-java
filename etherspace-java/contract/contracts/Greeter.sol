@@ -7,10 +7,10 @@ contract mortal {
     address owner;
 
     /* this function is executed at initialization and sets the owner of the contract */
-    function mortal() { owner = msg.sender; }
+    function mortal() {owner = msg.sender;}
 
     /* Function to recover the funds on the contract */
-    function kill() { if (msg.sender == owner) suicide(owner); }
+    function kill() {if (msg.sender == owner) suicide(owner);}
 }
 
 contract greeter is mortal {
@@ -27,10 +27,6 @@ contract greeter is mortal {
         greeting = _greeting;
     }
 
-    function twoDimensionArray(uint[5][] array, uint row, uint col) constant returns (uint) {
-        return array[row][col];
-    }
-
     /* main function */
     function greet() constant returns (string) {
         return greeting;
@@ -39,8 +35,12 @@ contract greeter is mortal {
     /* we include indexed events to demonstrate the difference that can be
     captured versus non-indexed */
     event Modified(
-            string indexed oldGreetingIdx, string indexed newGreetingIdx,
-            string oldGreeting, string newGreeting);
+        string indexed oldGreetingIdx, string indexed newGreetingIdx,
+        string oldGreeting, string newGreeting);
+
+    function twoDimensionArray(uint[5][] array, uint row, uint col) constant returns (uint) {
+        return array[row][col];
+    }
 
     function boolType(bool a) constant returns (bool) {
         return a;

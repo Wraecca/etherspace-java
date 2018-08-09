@@ -1,6 +1,7 @@
 package cc.etherspace.calladapter
 
 import cc.etherspace.*
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.runBlocking
 import org.amshove.kluent.*
@@ -12,15 +13,22 @@ import java.math.BigInteger
 
 class CoroutineGreeterTest {
     private lateinit var greeter: CoroutineGreeter
+    private lateinit var etherSpace: EtherSpace
+    private val objectMapper = jacksonObjectMapper()
 
     @Before
     fun setUp() {
-        val etherSpace = EtherSpace.build {
-            provider = "https://rinkeby.infura.io/"
-            credentials = WalletCredentials(Tests.TEST_WALLET_KEY)
-            callAdapters += CoroutineCallAdapter()
+        etherSpace = Tests.createEtherSpace()
+        greeter = Tests.createContract(etherSpace, CoroutineGreeter::class.java, objectMapper)
+    }
+
+    @Test(expected = IOException::class)
+    fun wrongContract() {
+        runBlocking {
+            val wrongGreeter = etherSpace.create("0xf9746f03bd6f29787994701996dffd7a1007f3a6", CoroutineGreeter::class.java)
+            val receipt = wrongGreeter.newGreeting("Hello World").await()
+            receipt.success.`should be false`()
         }
-        greeter = etherSpace.create(Tests.TEST_CONTRACT_ADDRESS, CoroutineGreeter::class.java)
     }
 
     @Test
@@ -29,8 +37,6 @@ class CoroutineGreeterTest {
             val receipt = greeter.newGreeting("Hello World").await()
             receipt.blockHash.length.`should be equal to`(66)
             receipt.transactionHash.length.`should be equal to`(66)
-            receipt.from!!.`should be equal to`(Tests.TEST_WALLET_ADDRESS)
-            receipt.to!!.`should be equal to`(Tests.TEST_CONTRACT_ADDRESS)
             receipt.logs.size.`should be greater than`(0)
 
             val events = receipt.listEvents(CoroutineGreeter.Modified::class.java)
@@ -51,8 +57,6 @@ class CoroutineGreeterTest {
             val receipt = hash.requestTransactionReceipt<Deferred<TransactionReceipt>>().await()
             receipt.blockHash.length.`should be equal to`(66)
             receipt.transactionHash.length.`should be equal to`(66)
-            receipt.from!!.`should be equal to`(Tests.TEST_WALLET_ADDRESS)
-            receipt.to!!.`should be equal to`(Tests.TEST_CONTRACT_ADDRESS)
             receipt.logs.size.`should be greater than`(0)
         }
     }
@@ -73,7 +77,7 @@ class CoroutineGreeterTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test(expected = IOException::class)
     fun greet_wrongFunctionName() {
         runBlocking {
             val greet = greeter.greet_wrongFunctionName().await()

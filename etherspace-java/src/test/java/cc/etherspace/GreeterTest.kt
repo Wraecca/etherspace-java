@@ -3,6 +3,7 @@ package cc.etherspace
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should be false`
 import org.amshove.kluent.`should be greater than`
 import org.amshove.kluent.`should equal`
 import org.junit.Before
@@ -13,6 +14,7 @@ import java.math.BigInteger
 
 class GreeterTest {
     private lateinit var greeter: Greeter
+    private lateinit var etherSpace: EtherSpace
 
     @Before
     fun setUp() {
@@ -22,12 +24,19 @@ class GreeterTest {
                 .addInterceptor(interceptor)
                 .build()
 
-        val etherSpace = EtherSpace.build {
+        etherSpace = EtherSpace.build {
             client = okHttpClient
             provider = "https://rinkeby.infura.io/"
             credentials = WalletCredentials(Tests.TEST_WALLET_KEY)
         }
         greeter = etherSpace.create(Tests.TEST_CONTRACT_ADDRESS, Greeter::class.java)
+    }
+
+    @Test
+    fun wrongContract() {
+        val wrongGreeter = etherSpace.create("0xf9746f03bd6f29787994701996dffd7a1007f3a6", Greeter::class.java)
+        val receipt = wrongGreeter.newGreeting("Hello World")
+        receipt.success.`should be false`()
     }
 
     @Test

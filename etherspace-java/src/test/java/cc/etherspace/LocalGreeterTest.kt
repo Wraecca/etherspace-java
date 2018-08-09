@@ -2,37 +2,32 @@ package cc.etherspace
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should be false`
 import org.amshove.kluent.`should be greater than`
 import org.amshove.kluent.`should equal`
 import org.junit.Before
 import org.junit.Test
 import org.web3j.utils.Numeric
-import java.io.File
 
 class LocalGreeterTest {
     private lateinit var greeter: Greeter
     private val objectMapper = jacksonObjectMapper()
+    private lateinit var etherSpace: EtherSpace
 
     @Before
     fun setUp() {
-        var contractAddress = objectMapper.readValue(File("build/contracts/greeter.json"),
-                ContractMetaData::class.java).networks.values.first().address
+        etherSpace = Tests.createEtherSpace()
+        greeter = Tests.createContract(etherSpace, Greeter::class.java, objectMapper)
+    }
 
-        val interceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger { message -> println(message) })
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
-        val okHttpClient = OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .build()
-
-        val etherSpace = EtherSpace.build {
-            client = okHttpClient
-            credentials = WalletCredentials("0xc5aea8fb8b669d27da1c644064fb4cd80b7d3c9b7d2ebcab2bfade236834c784")
-        }
-        greeter = etherSpace.create(contractAddress, Greeter::class.java)
+    @Test(expected = MismatchedInputException::class)
+    fun wrongContract() {
+        val wrongGreeter = etherSpace.create("0xf9746f03bd6f29787994701996dffd7a1007f3a6", Greeter::class.java)
+        val receipt = wrongGreeter.newGreeting("Hello World")
+        receipt.success.`should be false`()
     }
 
     @Test
