@@ -24,6 +24,9 @@ dependencies {
     compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinx_coroutines_version"
     testCompile "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinx_coroutines_version"
 
+    // klogging
+    compile "io.github.microutils:kotlin-logging:$kotlin_logging"
+
     // kotlin-unsigned
     compile "com.github.kotlin-graphics:kotlin-unsigned:$kotlin_unsigned_version"
 

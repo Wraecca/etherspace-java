@@ -3,8 +3,8 @@ package cc.etherspace
 import cc.etherspace.calladapter.CallAdapter
 import cc.etherspace.calladapter.PassThroughCallAdaptor
 import cc.etherspace.web3j.Web3jAdapter
-import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.google.common.reflect.TypeToken
+import mu.KotlinLogging
 import okhttp3.OkHttpClient
 import java.io.IOException
 import java.lang.reflect.AnnotatedElement
@@ -86,6 +86,8 @@ class EtherSpace(val web3: Web3,
 
         val encodedFunction = web3.abi.encodeFunctionCall(args, functionName)
         val transactionHash = np.provideNonce(web3, cd.address) { nonce ->
+            logger.debug { "invokeTransaction:from=${cd.address},to=$toAddress,function=$functionName,args=$args,options=$options" }
+
             val transactionObject = Web3.TransactionObject(cd.address,
                     toAddress,
                     encodedFunction,
@@ -113,6 +115,8 @@ class EtherSpace(val web3: Web3,
                                    args: List<Any>,
                                    returnType: Type,
                                    options: Options): Any {
+        logger.debug { "invokeView:to=$toAddress,function=$functionName,args=$args" }
+
         val encodedFunction = web3.abi.encodeFunctionCall(args, functionName)
         val transactionObject = Web3.TransactionObject(null,
                 toAddress,
@@ -166,5 +170,6 @@ class EtherSpace(val web3: Web3,
         inline fun build(block: Builder.() -> Unit) = Builder().apply(block).build()
         internal const val GET_TRANSACTION_RECEIPT_POLLING_INTERVAL_IN_MS = 5_000L
         internal const val GET_TRANSACTION_RECEIPT_POLLING_ATTEMPTS = 60
+        private val logger = KotlinLogging.logger {}
     }
 }

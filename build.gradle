@@ -8,6 +8,7 @@ buildscript {
     ext.mockito_inline_version = '2.19.0'
     ext.kotlin_unsigned_version = 'v3.1.2'
     ext.kotlinx_coroutines_version = '0.23.3'
+    ext.kotlin_logging = "1.5.9"
     ext.kluent_version = '1.38'
     ext.jackson_version = '2.9.6'
     ext.guava_version = '25.1-jre'
