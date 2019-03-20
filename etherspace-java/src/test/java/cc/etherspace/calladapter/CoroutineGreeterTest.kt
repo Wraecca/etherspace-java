@@ -2,8 +2,8 @@ package cc.etherspace.calladapter
 
 import cc.etherspace.*
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.*
 import org.junit.Before
 import org.junit.Test

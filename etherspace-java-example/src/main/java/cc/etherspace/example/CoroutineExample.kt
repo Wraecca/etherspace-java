@@ -2,8 +2,8 @@ package cc.etherspace.example
 
 import cc.etherspace.*
 import cc.etherspace.calladapter.CoroutineCallAdapter
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.math.BigInteger
 

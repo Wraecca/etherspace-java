@@ -1,7 +1,7 @@
 package cc.etherspace.calladapter
 
 import cc.etherspace.*
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import java.io.IOException
 
 interface CoroutineGreeter {

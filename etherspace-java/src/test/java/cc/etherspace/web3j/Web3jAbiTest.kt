@@ -259,7 +259,7 @@ class Web3jAbiTest {
                 listOf("0x000000000000000000000000000000000000000000000000000000000000f310",
                         "0x0000000000000000000000000000000000000000000000000000000000000010"))
         event.`should not be null`()
-        event!!.myString.`should be equal to`("Hello%!")
+        event.myString.`should be equal to`("Hello%!")
         event.myNumber.`should equal`(SolUint256(62224))
         event.mySmallNumber.`should equal`(SolUint8(16))
     }

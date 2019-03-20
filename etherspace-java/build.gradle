@@ -67,3 +67,11 @@ kotlin {
         coroutines "enable"
     }
 }
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: LOCAL_MVN_REPO)
+        }
+    }
+}

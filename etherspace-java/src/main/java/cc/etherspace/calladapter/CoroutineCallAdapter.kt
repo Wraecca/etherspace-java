@@ -1,7 +1,8 @@
 package cc.etherspace.calladapter
 
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
@@ -19,6 +20,6 @@ class CoroutineCallAdapter<T> : CallAdapter<T, Deferred<T>> {
     }
 
     override fun adapt(block: () -> T): Deferred<T> {
-        return async { block() }
+        return GlobalScope.async { block() }
     }
 }
